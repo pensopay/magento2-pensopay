@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <pensopay>
+                <active>0</active>
+                <title>Credit Card (PensoPay)</title>
+                <model>PensoPayFacade</model>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <public_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <testmode>0</testmode>
+                <autocapture>0</autocapture>
+                <transaction_fee>0</transaction_fee>
+                <transaction_fee_label>Transaction Fee</transaction_fee_label>
+                <sort_order>1</sort_order>
+                <payment_methods></payment_methods>
+                <privateInfoKeys></privateInfoKeys>
+                <paymentInfoKeys>cc_type,cc_number,exp_month,exp_year</paymentInfoKeys>
+            </pensopay>
+        </payment>
+    </default>
+</config>

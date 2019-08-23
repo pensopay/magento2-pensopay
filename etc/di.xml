@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="PensoPayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\PensoPay\Payment\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="infoBlockType" xsi:type="string">PensoPay\Payment\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensoPayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Configuration reader -->
+    <virtualType name="PensoPayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="PensoPayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">PensoPayAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">PensoPayCaptureCommand</item>
+                <item name="cancel" xsi:type="string">PensoPayCancelCommand</item>
+                <item name="refund" xsi:type="string">PensoPayRefundCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize command -->
+    <virtualType name="PensoPayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PensoPayAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">PensoPayAuthorizationHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PensoPay\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PensoPay\Payment\Gateway\Http\Client\TransactionAuthorize</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorization Request -->
+    <virtualType name="PensoPayAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">PensoPay\Payment\Gateway\Request\AuthorizationRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="PensoPay\Payment\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Authorization Response handlers -->
+    <virtualType name="PensoPayAuthorizationHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">PensoPay\Payment\Gateway\Response\TransactionIdHandler</item>
+                <item name="payment_link" xsi:type="string">PensoPay\Payment\Gateway\Response\PaymentLinkHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture command -->
+    <virtualType name="PensoPayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PensoPayCaptureRequest</argument>
+            <argument name="handler" xsi:type="object">PensoPayCaptureHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PensoPay\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">PensoPay\Payment\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">PensoPay\Payment\Gateway\Http\Client\TransactionCapture</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Request -->
+    <virtualType name="PensoPayCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">PensoPay\Payment\Gateway\Request\CaptureRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="PensoPay\Payment\Gateway\Request\CaptureRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Capture Response handlers -->
+    <virtualType name="PensoPayCaptureHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">PensoPay\Payment\Gateway\Response\TransactionIdHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cancel command -->
+    <virtualType name="PensoPayCancelCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PensoPayCancelRequest</argument>
+            <argument name="handler" xsi:type="object">PensoPay\Payment\Gateway\Response\TransactionIdHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PensoPay\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">PensoPay\Payment\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">PensoPay\Payment\Gateway\Http\Client\TransactionCancel</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cancel Request -->
+    <virtualType name="PensoPayCancelRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">PensoPay\Payment\Gateway\Request\CancelRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="PensoPay\Payment\Gateway\Request\CancelRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Refund Command -->
+    <virtualType name="PensoPayRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PensoPayRefundRequest</argument>
+            <argument name="handler" xsi:type="object">PensoPay\Payment\Gateway\Response\TransactionIdHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PensoPay\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">PensoPay\Payment\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">PensoPay\Payment\Gateway\Http\Client\TransactionRefund</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PensoPayRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">PensoPay\Payment\Gateway\Request\RefundRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="PensoPay\Payment\Gateway\Request\RefundRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="PensoPayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensoPayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="PensoPay\Payment\Block\Info">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Around plugin to set order status -->
+    <type name="Magento\Sales\Model\Order\Payment\State\CommandInterface">
+        <plugin name="pensopay_set_order_status" type="PensoPay\Payment\Plugin\Model\Order\Payment\State\CommandInterface" sortOrder="1" />
+    </type>
+</config>
