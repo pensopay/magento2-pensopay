@@ -17,6 +17,7 @@ use Zend_Locale;
 class PensoPayAdapter
 {
     const PUBLIC_KEY_XML_PATH      = 'payment/pensopay/public_key';
+    const BRANDING_ID_XML_PATH = 'payment/pensopay/branding_id';
     const TRANSACTION_FEE_XML_PATH = 'payment/pensopay/transaction_fee';
     const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
     const TEXT_ON_STATEMENT_XML_PATH = 'payment/pensopay/text_on_statement';
@@ -164,6 +165,10 @@ class PensoPayAdapter
 
             if ($textOnStatement = $this->scopeConfig->getValue(self::TEXT_ON_STATEMENT_XML_PATH)) {
                 $parameters['text_on_statement'] = $textOnStatement;
+            }
+
+            if ($brandingId = $this->scopeConfig->getValue(self::BRANDING_ID_XML_PATH)) {
+                $parameters['branding_id'] = $brandingId;
             }
 
             //Create payment link and return payment id
