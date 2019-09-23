@@ -1,0 +1,9 @@
+<?php
+
+    /** @var PensoPay\Payment\Helper\Viabill $viabillHelper */
+    $viabillHelper = $this->helper('PensoPay\Payment\Helper\Viabill');
+    $checkoutHelper = $this->helper('Magento\Checkout\Helper\Cart');
+?>
+<div class="checkout-viabill" style="display: none;">
+    <?= $viabillHelper->renderViabillPrice('payment', round($checkoutHelper->getQuote()->getGrandTotal(), 2), '.checkout-index-index|.grand.totals span.price') ?>
+</div>

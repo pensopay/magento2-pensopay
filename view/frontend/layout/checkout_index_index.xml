@@ -23,6 +23,12 @@
                                                                         <item name="pensopay" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
+                                                                        <item name="pensopay_viabill" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        </item>
+                                                                        <item name="pensopay_mobilepay" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        </item>
                                                                     </item>
                                                                 </item>
                                                             </item>
@@ -39,5 +45,8 @@
                 </argument>
             </arguments>
         </referenceBlock>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" template="PensoPay_Payment::viabill/checkout.phtml" name="viabill-cart"/>
+        </referenceContainer>
     </body>
 </page>

@@ -3,8 +3,15 @@
     <type name="Magento\Checkout\Model\CompositeConfigProvider">
         <arguments>
             <argument name="configProviders" xsi:type="array">
-                <item name="pensopay_config_provider" xsi:type="object">PensoPay\Payment\Model\Ui\ConfigProvider</item>
+                <item name="pensopay_config_provider" xsi:type="object">PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider</item>
+                <item name="pensopay_viabill_config_provider" xsi:type="object">PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider</item>
+                <item name="pensopay_mobilepay_config_provider" xsi:type="object">PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider</item>
             </argument>
         </arguments>
+    </type>
+
+    <!-- Viabill -->
+    <type name="Magento\Framework\Pricing\Render">
+        <plugin name="viabill-tag" type="PensoPay\Payment\Plugin\Framework\Pricing\Render" />
     </type>
 </config>

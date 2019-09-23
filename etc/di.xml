@@ -3,18 +3,85 @@
     <!-- Payment Method Facade configuration -->
     <virtualType name="PensoPayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\PensoPay\Payment\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="code" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider::CODE</argument>
             <argument name="infoBlockType" xsi:type="string">PensoPay\Payment\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
         </arguments>
     </virtualType>
+    <virtualType name="PensoPayViabillFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider::CODE</argument>
+            <argument name="infoBlockType" xsi:type="string">PensoPay\Payment\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensoPayViabillValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayMobilePayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider::CODE</argument>
+            <argument name="infoBlockType" xsi:type="string">PensoPay\Payment\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensoPayMobilePayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="PensoPayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensoPayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PensoPayViabillValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensoPayViabillConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayViabillConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensoPayViabillConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayMobilePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensoPayMobilePayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayMobilePayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensoPayMobilePayConfig</argument>
+        </arguments>
+    </virtualType>
 
     <!-- Configuration reader -->
     <virtualType name="PensoPayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayViabillConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayMobilePayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
 
@@ -150,20 +217,6 @@
             <argument name="config" xsi:type="object">PensoPayConfig</argument>
         </arguments>
     </type>
-
-    <!-- Value handlers infrastructure -->
-    <virtualType name="PensoPayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">PensoPayConfigValueHandler</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="PensoPayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
-        <arguments>
-            <argument name="configInterface" xsi:type="object">PensoPayConfig</argument>
-        </arguments>
-    </virtualType>
 
     <type name="PensoPay\Payment\Block\Info">
         <arguments>

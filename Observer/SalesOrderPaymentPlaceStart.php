@@ -3,6 +3,9 @@
 namespace PensoPay\Payment\Observer;
 
 use Magento\Framework\Event\Observer;
+use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
 
 class SalesOrderPaymentPlaceStart implements \Magento\Framework\Event\ObserverInterface
 {
@@ -17,7 +20,11 @@ class SalesOrderPaymentPlaceStart implements \Magento\Framework\Event\ObserverIn
         /** @var \Magento\Sales\Model\Order\Payment\Interceptor $payment */
         $payment = $observer->getPayment();
 
-        if ($payment->getMethod() === \PensoPay\Payment\Model\Ui\ConfigProvider::CODE) {
+        if (in_array($payment->getMethod(), [
+            PensoPayConfigProvider::CODE,
+            ViabillConfigProvider::CODE,
+            MobilePayConfigProvider::CODE
+        ], false)) {
             /** @var \Magento\Sales\Model\Order $order */
             $order = $payment->getOrder();
             $order->setCanSendNewEmailFlag(false)

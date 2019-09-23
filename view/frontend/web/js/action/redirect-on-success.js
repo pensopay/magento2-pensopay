@@ -6,13 +6,12 @@ define(
         'use strict';
 
         return {
-            redirectUrl: window.checkoutConfig.payment.pensopay.redirectUrl,
-
             /**
              * Provide redirect to page
              */
-            execute: function () {
-                window.location.replace(url.build(this.redirectUrl));
+            execute: function (method) {
+                var redirectUrl = window.checkoutConfig.payment[method].redirectUrl;
+                window.location.replace(url.build(redirectUrl));
             }
         };
     }

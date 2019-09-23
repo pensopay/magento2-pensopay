@@ -38,7 +38,10 @@ define(
                 };
             },
             afterPlaceOrder: function() {
-                pensopayRedirect.execute();
+                pensopayRedirect.execute(this.getCode());
+            },
+            getPaymentMethodExtra: function() {
+                return '';
             }
         });
     }

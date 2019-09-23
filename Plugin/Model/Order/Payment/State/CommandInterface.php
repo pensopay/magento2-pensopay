@@ -6,6 +6,9 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\State\CommandInterface as BaseCommandInterface;
+use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
 
 class CommandInterface
 {
@@ -26,7 +29,11 @@ class CommandInterface
     {
         $result = $proceed($payment, $amount, $order);
 
-        if ($payment->getMethod() === \PensoPay\Payment\Model\Ui\ConfigProvider::CODE) {
+        if (in_array($payment->getMethod(), [
+            PensoPayConfigProvider::CODE,
+            ViabillConfigProvider::CODE,
+            MobilePayConfigProvider::CODE
+        ], false)) {
             $orderStatus = Order::STATE_NEW;
             if ($orderStatus && $order->getState() == Order::STATE_PROCESSING) {
                 $order->setState($orderStatus)

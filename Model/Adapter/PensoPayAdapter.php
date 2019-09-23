@@ -4,6 +4,8 @@ namespace PensoPay\Payment\Model\Adapter;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
 use Psr\Log\LoggerInterface;
 use \Magento\Framework\UrlInterface;
 use QuickPay\QuickPay;
@@ -144,10 +146,21 @@ class PensoPayAdapter
                 "callbackurl"        => $this->url->getUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
                 "customer_email"     => $attributes['EMAIL'],
                 "autocapture"        => $this->scopeConfig->isSetFlag(self::AUTOCAPTURE_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE),
-                "payment_methods"    => $this->helper->getPaymentMethods(),
                 "language"           => $this->getLanguage(),
                 "auto_fee"           => $this->scopeConfig->isSetFlag(self::TRANSACTION_FEE_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE),
             ];
+
+            switch ($order->getPayment()->getMethod()) {
+                case ViabillConfigProvider::CODE:
+                    $parameters['payment_methods'] = 'viabill';
+                    break;
+                case MobilePayConfigProvider::CODE:
+                    $parameters['payment_methods'] = 'mobilepay';
+                    break;
+                default: //Covers default payment method - pensopay
+                    $parameters['payment_methods'] = $this->helper->getPaymentMethods();
+                    break;
+            }
 
             if ($textOnStatement = $this->scopeConfig->getValue(self::TEXT_ON_STATEMENT_XML_PATH)) {
                 $parameters['text_on_statement'] = $textOnStatement;

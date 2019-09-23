@@ -6,9 +6,10 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 /**
  * Class ConfigProvider
  */
-final class ConfigProvider implements ConfigProviderInterface
+class ConfigProvider implements ConfigProviderInterface
 {
-    const CODE = 'pensopay';
+
+    protected $_code;
 
     /**
      * Retrieve assoc array of checkout configuration
@@ -19,7 +20,7 @@ final class ConfigProvider implements ConfigProviderInterface
     {
         return [
             'payment' => [
-                self::CODE => [
+                $this->_code => [
                     'redirectUrl' => 'pensopay/payment/redirect',
                 ]
             ]

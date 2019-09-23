@@ -7,6 +7,7 @@
         <label class="label" data-bind="attr: {'for': getCode()}">
             <span data-bind="text: getTitle()"></span>
         </label>
+        <span class="payment-method-extra" data-bind="html: getPaymentMethodExtra()"></span>
     </div>
     <div class="payment-method-content">
         <!-- ko foreach: getRegion('messages') -->

@@ -12,6 +12,14 @@ define(
             {
                 type: 'pensopay',
                 component: 'PensoPay_Payment/js/view/payment/method-renderer/pensopay'
+            },
+            {
+                type: 'pensopay_viabill',
+                component: 'PensoPay_Payment/js/view/payment/method-renderer/pensopay-viabill'
+            },
+            {
+                type: 'pensopay_mobilepay',
+                component: 'PensoPay_Payment/js/view/payment/method-renderer/pensopay-mobilepay'
             }
         );
         return Component.extend({});
