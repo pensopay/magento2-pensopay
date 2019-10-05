@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles"/>
+    <body>
+        <referenceContainer name="content">
+            <uiComponent name="pensopay_virtualterminal_grid"/>
+            <block class="PensoPay\Payment\Block\Adminhtml\Virtualterminal\CreatePayment" name="payment_list"/>
+            <block class="Magento\Backend\Block\Template" name="redirect_payment" template="PensoPay_Payment::virtualterminal/redirect.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

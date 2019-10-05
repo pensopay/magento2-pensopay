@@ -228,4 +228,14 @@
     <type name="Magento\Sales\Model\Order\Payment\State\CommandInterface">
         <plugin name="pensopay_set_order_status" type="PensoPay\Payment\Plugin\Model\Order\Payment\State\CommandInterface" sortOrder="1" />
     </type>
+
+    <!-- Virtualterminal Grid -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="pensopay_virtualterminal_grid_data_source" xsi:type="string">PensoPay\Payment\Model\ResourceModel\Payment\Collection</item>
+                <item name="pensopay_virtualterminal_grid_data_source" xsi:type="string">PensoPay\Payment\Model\ResourceModel\Virtualterminal\Collection</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

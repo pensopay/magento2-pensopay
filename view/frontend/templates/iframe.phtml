@@ -1,0 +1,34 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $this */
+
+/** @var \PensoPay\Payment\Helper\Checkout $pensopayCheckoutHelper */
+$pensopayCheckoutHelper = $this->helper('PensoPay\Payment\Helper\Checkout');
+
+$url = $pensopayCheckoutHelper->getCheckoutSession()->getPaymentWindowUrl(true);
+?>
+<?php if (empty($url)): ?>
+    <script type="text/javascript">
+        window.location = '<?= $this->getUrl('/') ?>';
+    </script>
+<?php else: ?>
+    <iframe src="<?= $url ?>" height="100%" width="100%" style="min-height: 400px; min-height:750px">
+
+    </iframe>
+
+    <script type="text/javascript">
+        var poller = setInterval(pollPayment, 5000);
+
+        function pollPayment() {
+            new jQuery.ajax('<?php echo $this->getUrl('pensopay/payment/pollPayment') ?>', {
+                success: function(response) {
+                    if (!response.repeat) {
+                        clearInterval(poller);
+                    }
+                    if (response.error || response.success) {
+                        document.location = response.redirect;
+                    }
+                }
+            });
+        }
+    </script>
+<?php endif; ?>

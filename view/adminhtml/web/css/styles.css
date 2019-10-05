@@ -1,0 +1,35 @@
+@font-face {
+    font-family: 'pensopay';
+    src:  url('../fonts/pensopay.eot?a86jrw');
+    src:  url('../fonts/pensopay.eot?a86jrw#iefix') format('embedded-opentype'),
+    url('../fonts/pensopay.ttf?a86jrw') format('truetype'),
+    url('../fonts/pensopay.woff?a86jrw') format('woff'),
+    url('../fonts/pensopay.svg?a86jrw#pensopay') format('svg');
+    font-weight: normal;
+    font-style: normal;}
+
+.admin__menu .item-pensopay-menu.parent.level-0 > a:before {
+    font-family: 'pensopay';
+    content: "\e903";
+}
+
+.admin__menu .item-configure-pensopay.level-2 > a:before {
+    font-family: 'pensopay';
+    content: "\e901";
+}
+
+.admin__menu .item-configure-mobilepay.level-2 > a:before {
+    font-family: 'pensopay';
+    content: "\e900";
+    color: #5a78ff;
+}
+
+.admin__menu .item-configure-viabill.level-2 > a:before {
+    font-family: 'pensopay';
+    content: "\e902";
+    color: #1A96FF;
+}
+
+.admin__data-grid-wrap .data-grid .data-grid-draggable .data-row .data-grid-thumbnail-cell .admin__control-thumbnail > img:before {
+    border:none;
+}

@@ -2,15 +2,15 @@
 
 namespace PensoPay\Payment\Controller\Payment;
 
-use PensoPay\Payment\Helper\Checkout;
 use Magento\Framework\App\Action\Context;
+use PensoPay\Payment\Helper\Checkout;
 
 class CancelAction extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var Checkout
      */
-    private $checkoutHelper;
+    private $_checkoutHelper;
 
     /**
      * @param Context $context
@@ -21,18 +21,19 @@ class CancelAction extends \Magento\Framework\App\Action\Action
         Checkout $checkoutHelper
     ) {
         parent::__construct($context);
-        $this->checkoutHelper = $checkoutHelper;
+        $this->_checkoutHelper = $checkoutHelper;
     }
 
     /**
      * Customer canceled payment on gateway side.
      *
      * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
-        $this->checkoutHelper->cancelCurrentOrder('');
-        $this->checkoutHelper->restoreQuote();
+        $this->_checkoutHelper->cancelCurrentOrder('');
+        $this->_checkoutHelper->restoreQuote();
 
         $this->_redirect('checkout', ['_fragment' => 'payment']);
     }

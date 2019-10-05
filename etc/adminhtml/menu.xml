@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="PensoPay_Payment::pensopay_menu"
+             title="PensoPay"
+             module="PensoPay_Payment"
+             sortOrder="110"
+             dependsOnModule="PensoPay_Payment"
+             resource="PensoPay_Payment::main_menu"
+        />
+        <add id="PensoPay_Payment::virtualterminal_menu"
+             title="Virtual Terminal"
+             module="PensoPay_Payment"
+             sortOrder="10"
+             resource="PensoPay_Payment::virtualterminal"
+             parent="PensoPay_Payment::pensopay_menu"
+        />
+        <add id="PensoPay_Payment::virtualterminal_item"
+             title="Virtual Terminal"
+             module="PensoPay_Payment"
+             sortOrder="10"
+             resource="PensoPay_Payment::virtualterminal"
+             parent="PensoPay_Payment::virtualterminal_menu"
+             action="pensopay/virtualterminal"
+        />
+        <add id="PensoPay_Payment::config_menu"
+             title="Configuration"
+             module="PensoPay_Payment"
+             sortOrder="20"
+             resource="Magento_Payment::payment"
+             parent="PensoPay_Payment::pensopay_menu"
+        />
+        <add id="PensoPay_Payment::configure_pensopay"
+             title="&#32;&#32;&#32;"
+             module="PensoPay_Payment"
+             sortOrder="10"
+             resource="Magento_Payment::payment"
+             parent="PensoPay_Payment::config_menu"
+             action="pensopay/auxiliary/redirectpayment/type/payment_us_pensopay"
+        />
+        <add id="PensoPay_Payment::configure_mobilepay"
+             title="&#32;&#32;&#32;"
+             module="PensoPay_Payment"
+             sortOrder="20"
+             resource="Magento_Payment::payment"
+             parent="PensoPay_Payment::config_menu"
+             action="pensopay/auxiliary/redirectpayment/type/payment_us_pensopay_mobilepay"
+        />
+        <add id="PensoPay_Payment::configure_viabill"
+             title="&#32;&#32;&#32;"
+             module="PensoPay_Payment"
+             sortOrder="30"
+             resource="Magento_Payment::payment"
+             parent="PensoPay_Payment::config_menu"
+             action="pensopay/auxiliary/redirectpayment/type/payment_us_pensopay_viabill"
+        />
+    </menu>
+</config>

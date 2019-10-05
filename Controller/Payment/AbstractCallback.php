@@ -2,18 +2,13 @@
 
 namespace PensoPay\Payment\Controller\Payment;
 
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
 use Magento\Sales\Model\Order;
 use Zend\Json\Json;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\Request\InvalidRequestException;
 
 abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
 {
-    const PRIVATE_KEY_XML_PATH           = 'payment/pensopay/private_key';
-    const TESTMODE_XML_PATH              = 'payment/pensopay/testmode';
-    const TRANSACTION_FEE_LABEL_XML_PATH = 'payment/pensopay/transaction_fee_label';
-    const TRANSACTION_FEE_SKU            = 'transaction_fee';
-
     /**
      * @var \Psr\Log\LoggerInterface
      */
@@ -34,6 +29,9 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
      */
     protected $orderSender;
 
+    /** @var \PensoPay\Payment\Helper\Data $_pensoPayHelper */
+    protected $_pensoPayHelper;
+
     /**
      * Class constructor
      * @param \Magento\Framework\App\Action\Context              $context
@@ -45,13 +43,14 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Sales\Api\Data\OrderInterface $order,
-        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender
-    )
-    {
+        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
+        \PensoPay\Payment\Helper\Data $pensoPayHelper
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->order = $order;
         $this->orderSender = $orderSender;
+        $this->_pensoPayHelper = $pensoPayHelper;
 
         parent::__construct($context);
     }
@@ -77,7 +76,7 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
             $response = Json::decode($body);
 
             //Fetch private key from config and validate checksum
-            $key = $this->scopeConfig->getValue(self::PRIVATE_KEY_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+            $key = $this->_pensoPayHelper->getPrivateKey();
             $checksum = hash_hmac('sha256', $body, $key);
             $submittedChecksum = $this->getRequest()->getServer('HTTP_QUICKPAY_CHECKSUM_SHA256');
 
@@ -96,8 +95,7 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
                     }
 
                     //Cancel order if testmode is disabled and this is a test payment
-                    $testMode = $this->scopeConfig->isSetFlag(self::TESTMODE_XML_PATH,
-                        \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+                    $testMode = $this->_pensoPayHelper->getIsTestmode();
 
                     if (!$testMode && $response->test_mode === true) {
                         $this->logger->debug('Order attempted paid with a test card but testmode is disabled.');
@@ -109,7 +107,7 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
 
                     //Add card metadata
                     $payment = $order->getPayment();
-		    if (isset($response->metadata->type) && $response->metadata->type === 'card') {
+                    if (isset($response->metadata->type) && $response->metadata->type === 'card') {
                         $payment->setCcType($response->metadata->brand);
                         $payment->setCcLast4('xxxx-' . $response->metadata->last4);
                         $payment->setCcExpMonth($response->metadata->exp_month);
@@ -164,20 +162,20 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
     {
         try {
             foreach ($order->getAllItems() as $orderItem) {
-                if ($orderItem->getSku() === self::TRANSACTION_FEE_SKU) {
+                if ($orderItem->getSku() === \PensoPay\Payment\Helper\Data::TRANSACTION_FEE_SKU) {
                     return;
                 }
             }
 
             /** @var \Magento\Sales\Model\Order\Item $item */
             $item = $this->_objectManager->create(\Magento\Sales\Model\Order\Item::class);
-            $item->setSku(self::TRANSACTION_FEE_SKU);
+            $item->setSku(\PensoPay\Payment\Helper\Data::TRANSACTION_FEE_SKU);
 
             //Calculate fee price
             $feeBase = (float)$fee / 100;
             $feeTotal = $order->getStore()->getBaseCurrency()->convert($feeBase, $order->getOrderCurrencyCode());
 
-            $name = $this->scopeConfig->getValue(self::TRANSACTION_FEE_LABEL_XML_PATH);
+            $name = $this->_pensoPayHelper->getTransactionFeeLabel();
             $item->setName($name);
             $item->setBaseCost($feeBase);
             $item->setBasePrice($feeBase);

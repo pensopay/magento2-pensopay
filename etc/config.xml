@@ -31,6 +31,7 @@
                 <transaction_fee_label>Transaction Fee</transaction_fee_label>
                 <sort_order>1</sort_order>
                 <payment_methods></payment_methods>
+                <checkout_method>redirect</checkout_method>
                 <privateInfoKeys></privateInfoKeys>
                 <paymentInfoKeys>cc_type,cc_number,exp_month,exp_year</paymentInfoKeys>
             </pensopay>

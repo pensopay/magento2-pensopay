@@ -1,13 +1,19 @@
 <?php
+
 namespace PensoPay\Payment\Model\Adapter;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\UrlInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use PensoPay\Payment\Helper\Checkout as PensoPayHelperCheckout;
+use PensoPay\Payment\Helper\Data as PensoPayHelperData;
+use PensoPay\Payment\Model\Payment;
+use PensoPay\Payment\Model\PaymentFactory;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
 use Psr\Log\LoggerInterface;
-use \Magento\Framework\UrlInterface;
 use QuickPay\QuickPay;
 use Zend_Locale;
 
@@ -16,24 +22,18 @@ use Zend_Locale;
  */
 class PensoPayAdapter
 {
-    const PUBLIC_KEY_XML_PATH      = 'payment/pensopay/public_key';
-    const BRANDING_ID_XML_PATH = 'payment/pensopay/branding_id';
-    const TRANSACTION_FEE_XML_PATH = 'payment/pensopay/transaction_fee';
-    const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
-    const TEXT_ON_STATEMENT_XML_PATH = 'payment/pensopay/text_on_statement';
-
     /**
      * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * @var \Magento\Framework\UrlInterface
+     * @var UrlInterface
      */
     protected $url;
 
     /**
-     * @var \PensoPay\Payment\Helper\Data
+     * @var PensoPayHelperData
      */
     protected $helper;
 
@@ -43,7 +43,7 @@ class PensoPayAdapter
     protected $resolver;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     protected $scopeConfig;
 
@@ -52,57 +52,153 @@ class PensoPayAdapter
      */
     protected $orderRepository;
 
+    /** @var mixed $_apiKey */
+    protected $_apiKey;
+
+    /** @var QuickPay $_client */
+    protected $_client;
+
+    /** @var PensoPayHelperCheckout $_checkoutHelper */
+    protected $_checkoutHelper;
+
+    /** @var PaymentFactory $_paymentFactory */
+    protected $_paymentFactory;
+
+    /** @var StoreManagerInterface $_storeManager */
+    protected $_storeManager;
+
+    /** @var \Magento\Store\Model\Store $_frontStore */
+    protected $_frontStore;
+
     /**
      * PensoPayAdapter constructor.
      *
      * @param LoggerInterface $logger
      * @param UrlInterface $url
-     * @param \PensoPay\Payment\Helper\Data $helper
+     * @param PensoPayHelperData $helper
      * @param ScopeConfigInterface $scopeConfig
      * @param ResolverInterface $resolver
+     * @param OrderRepositoryInterface $orderRepository
+     * @param PensoPayHelperCheckout $checkoutHelper
+     * @param PaymentFactory $paymentFactory
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         LoggerInterface $logger,
         UrlInterface $url,
-        \PensoPay\Payment\Helper\Data $helper,
+        PensoPayHelperData $helper,
         ScopeConfigInterface $scopeConfig,
         ResolverInterface $resolver,
-        OrderRepositoryInterface $orderRepository
-    )
-    {
+        OrderRepositoryInterface $orderRepository,
+        PensoPayHelperCheckout $checkoutHelper,
+        PaymentFactory $paymentFactory,
+        StoreManagerInterface $storeManager
+    ) {
         $this->logger = $logger;
         $this->url = $url;
         $this->helper = $helper;
         $this->scopeConfig = $scopeConfig;
         $this->resolver = $resolver;
         $this->orderRepository = $orderRepository;
+        $this->_checkoutHelper = $checkoutHelper;
+        $this->_paymentFactory = $paymentFactory;
+        $this->_storeManager = $storeManager;
+
+        $this->_apiKey = $this->helper->getPublicKey();
+        $this->_client = new QuickPay(":{$this->_apiKey}");
+    }
+
+    /**
+     * @return \Magento\Store\Api\Data\StoreInterface|\Magento\Store\Model\Store
+     */
+    protected function getFrontStore()
+    {
+        if (!$this->_frontStore) {
+            //This feels a little more reliable than get default store due to the ?: null
+            //Intentionally structured as a loop to avoid having to check for empty results etc
+            foreach ($this->_storeManager->getStores() as $store) {
+                $this->_frontStore = $store;
+                break;
+            }
+        }
+        return $this->_frontStore;
+    }
+
+    protected function getFrontUrl($path = '', $params = [])
+    {
+        if ($this->url instanceof \Magento\Backend\Model\UrlInterface) {
+            $store = $this->getFrontStore();
+            return $store->getUrl($path, $params);
+        }
+        return $this->url->getUrl($path, $params);
     }
 
     /**
      * Authorize payment and create payment link
      *
      * @param array $attributes
+     * @param bool $autoSave
      * @return array|bool
      */
-    public function authorizeAndCreatePaymentLink(array $attributes)
+    public function authorizeAndCreatePaymentLink(array $attributes, $autoSave = true)
     {
         try {
-            $api_key = $this->scopeConfig->getValue(self::PUBLIC_KEY_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $client = new QuickPay(":{$api_key}");
+            $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+            $form = $this->_setupRequest($attributes);
 
-            $form = [
-                'order_id' => $attributes['INCREMENT_ID'],
-                'currency' => $attributes['CURRENCY'],
-            ];
+            $payments = $this->_client->request->post('/payments', $form);
+            $paymentArray = $payments->asArray();
+            $paymentId = $paymentArray['id'];
 
+            $paymentArray['link'] = $this->createPaymentLink($attributes, $paymentId);
+
+            if ($isVirtualTerminal) {
+                $this->_setExtraVirtualTerminalData($attributes, $paymentArray);
+            }
+
+            if ($autoSave) {
+                $this->_autoSave($paymentArray);
+            }
+
+            return $paymentArray;
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
+        }
+
+        return true;
+    }
+
+    protected function _setExtraVirtualTerminalData($attributes, &$paymentArray)
+    {
+        $paymentArray[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL] = true;
+        $paymentArray['customer_name'] = $attributes['CUSTOMER_NAME'];
+        $paymentArray['customer_email'] = $attributes['CUSTOMER_EMAIL'];
+        $paymentArray['customer_street'] = $attributes['CUSTOMER_STREET'];
+        $paymentArray['customer_zipcode'] = $attributes['CUSTOMER_ZIPCODE'];
+        $paymentArray['customer_city'] = $attributes['CUSTOMER_CITY'];
+        return $paymentArray;
+    }
+
+    protected function _setupRequest(&$attributes)
+    {
+        $form = [
+            'order_id' => $attributes['INCREMENT_ID'],
+            'currency' => $attributes['CURRENCY'],
+        ];
+
+        $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+        if (!$isVirtualTerminal) {
             $shippingAddress = $attributes['SHIPPING_ADDRESS'];
             $form['shipping_address'] = [];
-            $form['shipping_address']['name'] = $shippingAddress->getFirstName() . " " . $shippingAddress->getLastName();
+            $form['shipping_address']['name'] = $shippingAddress->getFirstName() . ' ' . $shippingAddress->getLastName();
             $form['shipping_address']['street'] = $shippingAddress->getStreetLine1();
             $form['shipping_address']['city'] = $shippingAddress->getCity();
             $form['shipping_address']['zip_code'] = $shippingAddress->getPostcode();
             $form['shipping_address']['region'] = $shippingAddress->getRegionCode();
-            $form['shipping_address']['country_code'] = Zend_Locale::getTranslation($shippingAddress->getCountryId(), 'Alpha3ToTerritory');
+            $form['shipping_address']['country_code'] = Zend_Locale::getTranslation(
+                $shippingAddress->getCountryId(),
+                'Alpha3ToTerritory'
+            );
             $form['shipping_address']['phone_number'] = $shippingAddress->getTelephone();
             $form['shipping_address']['email'] = $shippingAddress->getEmail();
 
@@ -114,73 +210,151 @@ class PensoPayAdapter
 
             $billingAddress = $attributes['BILLING_ADDRESS'];
             $form['invoice_address'] = [];
-            $form['invoice_address']['name'] = $billingAddress->getFirstName() . " " . $billingAddress->getLastName();
+            $form['invoice_address']['name'] = $billingAddress->getFirstName() . ' ' . $billingAddress->getLastName();
             $form['invoice_address']['street'] = $billingAddress->getStreetLine1();
             $form['invoice_address']['city'] = $billingAddress->getCity();
             $form['invoice_address']['zip_code'] = $billingAddress->getPostcode();
             $form['invoice_address']['region'] = $billingAddress->getRegionCode();
-            $form['invoice_address']['country_code'] = Zend_Locale::getTranslation($billingAddress->getCountryId(), 'Alpha3ToTerritory');
+            $form['invoice_address']['country_code'] = Zend_Locale::getTranslation(
+                $billingAddress->getCountryId(),
+                'Alpha3ToTerritory'
+            );
             $form['invoice_address']['phone_number'] = $billingAddress->getTelephone();
             $form['invoice_address']['email'] = $billingAddress->getEmail();
+
+            $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
             //Build basket array
             $items = $attributes['ITEMS'];
             $form['basket'] = [];
             foreach ($items as $item) {
                 $form['basket'][] = [
-                    'qty'        => (int) $item->getQtyOrdered(),
-                    'item_no'    => $item->getSku(),
-                    'item_name'  => $item->getName(),
-                    'item_price' => (int) ($item->getBasePriceInclTax() * 100),
-                    'vat_rate'   => $item->getTaxPercent() / 100,
+                    'qty' => (int)$item->getQtyOrdered(),
+                    'item_no' => $item->getSku(),
+                    'item_name' => $item->getName(),
+                    'item_price' => (int)($item->getBasePriceInclTax() * 100),
+                    'vat_rate' => $item->getTaxPercent() / 100,
                 ];
             }
+        } else {
+            $form['basket'] = [
+                [
+                    'qty'        => 1,
+                    'item_no'    => 'virtualterminal',
+                    'item_name'  => 'Products',
+                    'item_price' => $attributes['AMOUNT'],
+                    'vat_rate'   => 0.25, //TODO
+                ]
+            ];
+        }
+        return $form;
+    }
 
-            $payments = $client->request->post('/payments', $form);
+    public function updatePaymentAndPaymentLink($attributes, $autoSave = true)
+    {
+        try {
+            $form = $this->_setupRequest($attributes);
+
+            $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+            if ($isVirtualTerminal) {
+                $form['id'] = $attributes['ORDER_ID'];
+            }
+
+            $payments = $this->_client->request->patch(sprintf('/payments/%s', $form['id']), $form);
             $paymentArray = $payments->asArray();
             $paymentId = $paymentArray['id'];
 
-            $parameters = [
-                "amount"             => $attributes['AMOUNT'],
-                "continueurl"        => $this->url->getUrl('pensopay/payment/returnAction'),
-                "cancelurl"          => $this->url->getUrl('pensopay/payment/cancelAction'),
-                "callbackurl"        => $this->url->getUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
-                "customer_email"     => $attributes['EMAIL'],
-                "autocapture"        => $this->scopeConfig->isSetFlag(self::AUTOCAPTURE_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE),
-                "language"           => $this->getLanguage(),
-                "auto_fee"           => $this->scopeConfig->isSetFlag(self::TRANSACTION_FEE_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE),
-            ];
+            $paymentArray['link'] = $this->createPaymentLink($attributes, $paymentId);
 
-            switch ($order->getPayment()->getMethod()) {
-                case ViabillConfigProvider::CODE:
-                    $parameters['payment_methods'] = 'viabill';
-                    break;
-                case MobilePayConfigProvider::CODE:
-                    $parameters['payment_methods'] = 'mobilepay';
-                    break;
-                default: //Covers default payment method - pensopay
-                    $parameters['payment_methods'] = $this->helper->getPaymentMethods();
-                    break;
+            if ($isVirtualTerminal) {
+                $this->_setExtraVirtualTerminalData($attributes, $paymentArray);
             }
 
-            if ($textOnStatement = $this->scopeConfig->getValue(self::TEXT_ON_STATEMENT_XML_PATH)) {
-                $parameters['text_on_statement'] = $textOnStatement;
+            if ($autoSave) {
+                $paymentArray['payment_id'] = $attributes['payment_id'];
+                $this->_autoSave($paymentArray, true);
             }
-
-            if ($brandingId = $this->scopeConfig->getValue(self::BRANDING_ID_XML_PATH)) {
-                $parameters['branding_id'] = $brandingId;
-            }
-
-            //Create payment link and return payment id
-            $paymentLink = $client->request->put(sprintf('/payments/%s/link', $paymentId), $parameters)->asArray();
-            $paymentArray['link'] = $paymentLink['url'];
 
             return $paymentArray;
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }
-
         return true;
+    }
+
+    protected function _autoSave($payment, $update = false)
+    {
+        /** @var Payment $paymentObject */
+        $paymentObject = $this->_paymentFactory->create();
+
+        if ($update) {
+            $paymentId = $payment['payment_id'];
+            $paymentObject->load($paymentId);
+            if ($paymentObject->getId()) {
+                $paymentObject->importFromRemotePayment($payment);
+                $paymentObject->setId($paymentId);
+            }
+        } else {
+            $paymentObject->importFromRemotePayment($payment);
+        }
+        $paymentObject->save();
+    }
+
+    public function createPaymentLink($attributes, $paymentId)
+    {
+        $parameters = [
+            'amount' => $attributes['AMOUNT'],
+            'callbackurl' => $this->getFrontUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
+            'customer_email' => $attributes['EMAIL']
+        ];
+        $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+        if (!$isVirtualTerminal) {
+            $parameters['autocapture'] = $this->helper->getIsAutocapture();
+            $parameters['language'] = $this->getLanguage();
+            $parameters['auto_fee'] = $this->helper->getIsTransactionFee();
+        } else {
+            $parameters['autocapture'] = $attributes['AUTOCAPTURE'];
+            $parameters['language'] = $this->getResolvedLanguage($attributes['LANGUAGE']);
+            $parameters['auto_fee'] = $this->helper->getIsTransactionFee();
+        }
+
+        $isIframe = $this->_checkoutHelper->isCheckoutIframe();
+
+        if ($isIframe) {
+            if (!$isVirtualTerminal) {
+                $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/iframeCancel');
+                $parameters['framed'] = true;
+            }
+        } else {
+            if (!$isVirtualTerminal) {
+                $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction');
+                $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/cancelAction');
+            }
+        }
+
+        switch ($attributes['PAYMENT_METHOD']) {
+            case ViabillConfigProvider::CODE:
+                $parameters['payment_methods'] = 'viabill';
+                break;
+            case MobilePayConfigProvider::CODE:
+                $parameters['payment_methods'] = 'mobilepay';
+                break;
+            default: //Covers default payment method - pensopay
+                $parameters['payment_methods'] = $this->helper->getPaymentMethods();
+                break;
+        }
+
+        if ($textOnStatement = $this->helper->getTextOnStatement()) {
+            $parameters['text_on_statement'] = $textOnStatement;
+        }
+
+        if ($brandingId = $this->helper->getBrandingId()) {
+            $parameters['branding_id'] = $brandingId;
+        }
+
+        //Create payment link and return payment id
+        $paymentLink = $this->_client->request->put(sprintf('/payments/%s/link', $paymentId), $parameters)->asArray();
+        return $paymentLink['url'];
     }
 
     /**
@@ -192,9 +366,6 @@ class PensoPayAdapter
     public function capture(array $attributes)
     {
         try {
-            $api_key = $this->scopeConfig->getValue(self::PUBLIC_KEY_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $client = new QuickPay(":{$api_key}");
-
             $form = [
                 'id'     => $attributes['TXN_ID'],
                 'amount' => $attributes['AMOUNT'],
@@ -202,15 +373,33 @@ class PensoPayAdapter
 
             $id = $attributes['TXN_ID'];
 
-            $payments = $client->request->post("/payments/{$id}/capture", $form);
-            $paymentArray = $payments->asArray();
-
-            return $paymentArray;
+            $payments = $this->_client->request->post("/payments/{$id}/capture?synchronized", $form);
+            return $payments->asArray();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }
 
         return true;
+    }
+
+    /**
+     * Get Payment data from remote.
+     *
+     * @param $paymentId
+     * @return array
+     * @throws \Exception
+     */
+    public function getPayment($paymentId)
+    {
+        $this->logger->debug("Updating payment state for {$paymentId}");
+
+        try {
+            $payments = $this->_client->request->get("/payments/{$paymentId}");
+            return $payments->asArray();
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -221,11 +410,8 @@ class PensoPayAdapter
      */
     public function cancel(array $attributes)
     {
-        $this->logger->debug("Cancel payment");
+        $this->logger->debug('Cancel payment');
         try {
-            $api_key = $this->scopeConfig->getValue(self::PUBLIC_KEY_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $client = new QuickPay(":{$api_key}");
-
             $form = [
                 'id' => $attributes['TXN_ID'],
             ];
@@ -234,7 +420,7 @@ class PensoPayAdapter
 
             $id = $attributes['TXN_ID'];
 
-            $payments = $client->request->post("/payments/{$id}/cancel", $form);
+            $payments = $this->_client->request->post("/payments/{$id}/cancel?synchronized", $form);
             $paymentArray = $payments->asArray();
 
             $this->logger->debug(var_export($paymentArray, true));
@@ -255,12 +441,9 @@ class PensoPayAdapter
      */
     public function refund(array $attributes)
     {
-        $this->logger->debug("Refund payment");
+        $this->logger->debug('Refund payment');
 
         try {
-            $api_key = $this->scopeConfig->getValue(self::PUBLIC_KEY_XML_PATH, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $client = new QuickPay(":{$api_key}");
-
             $form = [
                 'id' => $attributes['TXN_ID'],
                 'amount' => $attributes['AMOUNT'],
@@ -270,7 +453,7 @@ class PensoPayAdapter
 
             $id = $attributes['TXN_ID'];
 
-            $payments = $client->request->post("/payments/{$id}/refund", $form);
+            $payments = $this->_client->request->post("/payments/{$id}/refund?synchronized", $form);
             $paymentArray = $payments->asArray();
 
             $this->logger->debug(var_export($paymentArray, true));
@@ -290,15 +473,18 @@ class PensoPayAdapter
      */
     private function getLanguage()
     {
-        $locale = $this->resolver->getLocale();
+        return $this->getResolvedLanguage($this->resolver->getLocale());
+    }
 
+    private function getResolvedLanguage($lang)
+    {
         //Map both norwegian locales to no
         $map = [
             'nb' => 'no',
             'nn' => 'no',
         ];
 
-        $language = explode('_', $locale)[0];
+        $language = explode('_', $lang)[0];
 
         if (isset($map[$language])) {
             return $map[$language];

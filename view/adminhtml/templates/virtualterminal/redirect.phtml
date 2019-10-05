@@ -1,0 +1,18 @@
+<?php
+    $session = $this->helper('PensoPay\Payment\Helper\Data')->getBackendSession();
+    if ($session->getPaymentLink()):
+        $paymentLink = $session->getData('payment_link', true); //Avoid repeat popups
+        $paymentLinkAutoVisit = $session->getData('payment_link_autovisit', true); // ^
+
+?>
+        <div style="display:none">
+            <a id="paymentLink" target="_blank" href="<?= $paymentLink; ?>"></a>
+        </div>
+        <?php if ($paymentLinkAutoVisit): ?>
+            <script type="text/javascript">
+                require(['jquery'], function($) {
+                    jQuery('#paymentLink')[0].click();
+                });
+            </script>
+        <?php endif; ?>
+<?php endif; ?>
