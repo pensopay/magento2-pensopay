@@ -11,6 +11,8 @@ use PensoPay\Payment\Helper\Data as PensoPayHelper;
 use PensoPay\Payment\Model\Adapter\PensoPayAdapter;
 use PensoPay\Payment\Model\Payment;
 use PensoPay\Payment\Model\PaymentFactory;
+use PensoPay\Payment\Model\ResourceModel\Payment\Collection;
+use PensoPay\Payment\Model\ResourceModel\Payment\CollectionFactory;
 
 class Generic extends Action
 {
@@ -28,6 +30,9 @@ class Generic extends Action
 
     /** @var Payment $_payment */
     protected $_payment;
+
+    /** @var CollectionFactory $_paymentCollectionFactory */
+    protected $_paymentCollectionFactory;
 
     /** @var PensoPayHelper $_pensoPayHelper */
     protected $_pensoPayHelper;
@@ -48,6 +53,7 @@ class Generic extends Action
         PageFactory $resultPageFactory,
         PensoPayAdapter $payAdapter,
         PaymentFactory $paymentFactory,
+        CollectionFactory $paymentCollectionFactory,
         PensoPayHelper $pensoPayHelper
     ) {
         parent::__construct($context);
@@ -55,6 +61,7 @@ class Generic extends Action
         $this->_resultPageFactory = $resultPageFactory;
         $this->_payAdapter = $payAdapter;
         $this->_paymentFactory = $paymentFactory;
+        $this->_paymentCollectionFactory = $paymentCollectionFactory;
         $this->_pensoPayHelper = $pensoPayHelper;
     }
 
@@ -244,6 +251,34 @@ class Generic extends Action
             return $this->_redirectToTerminal();
         }
         return true;
+    }
+
+    protected function _genericMassPaymentAction($action)
+    {
+        /** @var RequestInterface $request */
+        $request = $this->getRequest();
+
+        $ids = $request->getParam('selected');
+        if (!empty($ids)) {
+            /** @var Collection $paymentCollection */
+            $paymentCollection = $this->_paymentCollectionFactory->create();
+            $paymentCollection->addFieldToFilter('id', ['in' => $ids]);
+
+            $this->_redirect = false;
+
+            if (!empty($paymentCollection->getItems())) {
+                /** @var Payment $payment */
+                foreach ($paymentCollection as $payment) {
+                    if ($payment->{'can' . ucfirst($action)}()) { //canCapture, canCancel, canRefund
+                        $this->_payment = $payment;
+                        $this->_genericPaymentCallback($action);
+                    }
+                }
+            } else {
+                $this->getMessageManager()->addErrorMessage(__('No payments found.'));
+            }
+        }
+        return $this->_redirectToTerminal();
     }
 
     public function execute()

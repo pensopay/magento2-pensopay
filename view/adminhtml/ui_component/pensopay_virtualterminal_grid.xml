@@ -43,20 +43,42 @@
         <massaction name="listing_massaction">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="selectProvider" xsi:type="string">pensopay_virtualterminal_grid.pensopay_virtualterminal_grid.pensopay_virtualterminal_columns.id</item>
+                    <item name="selectProvider" xsi:type="string">pensopay_virtualterminal_grid.pensopay_virtualterminal_grid.pensopay_virtualterminal_columns.ids</item>
                     <item name="displayArea" xsi:type="string">top</item>
                     <item name="indexField" xsi:type="string">id</item>
                 </item>
             </argument>
-            <action name="delete">
+            <action name="capture">
                 <settings>
                     <confirm>
-                        <message translate="true">Are you sure you want to delete the selected customers?</message>
-                        <title translate="true">Delete items</title>
+                        <message translate="true">Are you sure you want to capture the selected payments?</message>
+                        <title translate="true">Capture Payments</title>
                     </confirm>
-                    <url path="customer/index/massDelete"/>
-                    <type>delete</type>
-                    <label translate="true">Delete</label>
+                    <url path="pensopay/virtualterminal/massCapture"/>
+                    <type>capture</type>
+                    <label translate="true">Capture</label>
+                </settings>
+            </action>
+            <action name="refund">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to refund the selected payments?</message>
+                        <title translate="true">Refund Payments</title>
+                    </confirm>
+                    <url path="pensopay/virtualterminal/massRefund"/>
+                    <type>refund</type>
+                    <label translate="true">Refund</label>
+                </settings>
+            </action>
+            <action name="cancel">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to cancel the selected payments?</message>
+                        <title translate="true">Cancel Payments</title>
+                    </confirm>
+                    <url path="pensopay/virtualterminal/massCancel"/>
+                    <type>cancel</type>
+                    <label translate="true">Cancel</label>
                 </settings>
             </action>
         </massaction>

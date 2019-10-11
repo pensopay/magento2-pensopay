@@ -1,0 +1,62 @@
+<?php
+
+// @codingStandardsIgnoreFile
+/**
+ * @var \PensoPay\Payment\Block\Info $block
+ * @see \PensoPay\Payment\Block\Info
+ */
+$specificInfo = $block->getSpecificInformation();
+?>
+<?= $block->escapeHtml($block->getMethod()->getTitle()) ?>
+
+<?php
+$payment = $this->getPayment();
+if ($payment !== null): ?>
+    <?php
+    $metadata = $payment->getMetadata();
+    if (!empty($metadata)): ?>
+        <table border="0">
+            <?php if ($payment->getReferenceId()): ?>
+                <tr>
+                    <td><?= __('Transaction ID:'); ?></td>
+                    <td><?= $payment->getReferenceId(); ?></td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <td><?= __('Card Type:') ?></td>
+                <?php
+                $cardImagePath = sprintf('PensoPay_Payment::images/pensopaypayment/%s.png', $metadata['brand']);
+                $cardImageUrl = $this->getViewFileUrl($cardImagePath);
+                ?>
+                <td>
+                    <img src="<?= $cardImageUrl; ?>" width="40" alt="<?= $metadata['brand']; ?>" />
+                </td>
+            </tr>
+            <tr>
+                <td><?= __('Currency:'); ?></td>
+                <td><?= $payment->getCurrency(); ?></td>
+            </tr>
+            <tr>
+                <td><?= __('Card number:'); ?></td>
+                <td><?= implode(' ', str_split(sprintf('%sXXXXXX%s', $metadata['bin'], $metadata['last4']), 4)); ?></td>
+            </tr>
+
+            <tr>
+                <td><?= __('Acquirer:'); ?></td>
+                <td><?= $payment->getAcquirer(); ?></td>
+            </tr>
+
+            <tr>
+                <td><?= __('Is 3D Secure:'); ?></td>
+                <td><?= $metadata['is_3d_secure'] ? __('Yes') : __('No'); ?></td>
+            </tr>
+        </table>
+        <br />
+    <?php endif;?>
+<?php else: ?>
+    <br />
+    <?= __('Der er endnu ikke registreret nogen betaling for denne ordre!'); ?>
+    <br />
+<?php endif; ?>
+
+<?= $block->getChildHtml() ?>
