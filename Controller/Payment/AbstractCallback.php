@@ -32,6 +32,8 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
     /** @var \PensoPay\Payment\Helper\Data $_pensoPayHelper */
     protected $_pensoPayHelper;
 
+    protected $_pensoPaymentFactory;
+
     /**
      * Class constructor
      * @param \Magento\Framework\App\Action\Context              $context
@@ -44,14 +46,15 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
-        \PensoPay\Payment\Helper\Data $pensoPayHelper
+        \PensoPay\Payment\Helper\Data $pensoPayHelper,
+	\PensoPay\Payment\Model\PaymentFactory $paymentFactory
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->order = $order;
         $this->orderSender = $orderSender;
         $this->_pensoPayHelper = $pensoPayHelper;
-
+	$this->_pensoPaymentFactory = $paymentFactory;
         parent::__construct($context);
     }
 
@@ -129,7 +132,13 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
                         $this->addTransactionFee($order, $response->fee);
                     }
 
+		    $pensoPayment = $this->_pensoPaymentFactory->create();
+		    $pensoPayment->load($order->getIncrementId(), 'order_id');
+                    $pensoPayment->importFromRemotePayment(json_decode($body, true));
+		    $pensoPayment->save();
+
                     //Set order to processing
+
                     $stateProcessing = \Magento\Sales\Model\Order::STATE_PROCESSING;
 
                     if ($order->getState() !== $stateProcessing) {
