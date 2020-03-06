@@ -4,6 +4,7 @@ namespace PensoPay\Payment\Controller\Payment;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use PensoPay\Payment\Gateway\Response\PaymentLinkHandler;
 use PensoPay\Payment\Helper\Checkout as PensoPayCheckoutHelper;
 use Psr\Log\LoggerInterface;
@@ -17,6 +18,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
     /** @var PensoPayCheckoutHelper $_pensopayCheckoutHelper */
     protected $_pensopayCheckoutHelper;
+
+    /** @var StoreManagerInterface $_storeManager3 */
+    protected $_storeManager;
 
     /**
      * Class constructor
@@ -45,7 +49,32 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $order = $this->_pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
 
-            if ($this->_pensopayCheckoutHelper->isCheckoutIframe()) {
+//            $isIframe = $this->_pensopayCheckoutHelper->isCheckoutIframe();
+            $isIframe = false; //Deprecated
+            $isEmbedded = $this->_pensopayCheckoutHelper->isCheckoutEmbedded();
+
+            if ($isEmbedded) {
+                $paymentMethod = $order->getPayment()->getMethod();
+                if (in_array($paymentMethod, ['pensopay_dankort', 'pensopay_klarna', 'pensopay_mobilepay'],
+                    true)) { //These do not support embedded
+                    $isEmbedded = false;
+                }
+            }
+
+            if ($isEmbedded) {
+                $paymentData = [
+                    'payment_link' => $paymentLink,
+                    'total' => $order->getGrandTotal(),
+                    'currency' => $order->getOrderCurrencyCode(),
+                    'redirecturl' => $this->_url->getUrl('pensopay/payment/returnAction'),
+                    'cancelurl' => $this->_url->getUrl('pensopay/payment/embeddedCancel')
+                ];
+
+                $this->_pensopayCheckoutHelper->getCheckoutSession()->setPaymentData(serialize($paymentData));
+                return $this->_redirect('pensopay/payment/embedded');
+            }
+
+            if ($isIframe) {
                 $this->_pensopayCheckoutHelper->getCheckoutSession()->setPaymentWindowUrl($paymentLink);
                 return $this->_redirect('pensopay/payment/iframe');
             }
