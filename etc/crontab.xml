@@ -4,5 +4,8 @@
         <job instance="PensoPay\Payment\Cron\UpdatePayments" method="execute" name="pensopay_payments_update">
             <schedule>*/10 * * * *</schedule>
         </job>
+        <job instance="PensoPay\Payment\Cron\CancelOldOrders" method="execute" name="pensopay_old_order_cancel">
+            <schedule>* * * * *</schedule>
+        </job>
     </group>
 </config>

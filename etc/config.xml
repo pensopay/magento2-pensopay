@@ -26,6 +26,7 @@
                 <public_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <testmode>0</testmode>
+                <pending_payment_order_cancel>0</pending_payment_order_cancel>
                 <autocapture>0</autocapture>
                 <transaction_fee>0</transaction_fee>
                 <transaction_fee_label>Transaction Fee</transaction_fee_label>

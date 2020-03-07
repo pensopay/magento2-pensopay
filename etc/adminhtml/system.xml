@@ -60,6 +60,11 @@
                     <label>Checkout Method</label>
                     <source_model>PensoPay\Payment\Model\Config\Source\CheckoutMethods</source_model>
                 </field>
+                <field id="pending_payment_order_cancel" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Automatic Cancel</label>
+                    <comment><![CDATA[Cancel order automatically after 24h of non-payment pass.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="branding_id" translate="label comment" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Branding Id</label>
                     <comment><![CDATA[Branding Id that you wish to use, leave blank for default]]></comment>
