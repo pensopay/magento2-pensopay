@@ -12,6 +12,7 @@
                 <active>0</active>
                 <title>Credit Card (PensoPay)</title>
                 <model>PensoPayFacade</model>
+                <position>0</position>
                 <order_status>pending</order_status>
                 <payment_action>authorize</payment_action>
                 <is_gateway>1</is_gateway>
@@ -40,6 +41,7 @@
                 <active>0</active>
                 <title>ViaBill (PensoPay)</title>
                 <model>PensoPayViabillFacade</model>
+                <position>1</position>
                 <order_status>pending</order_status>
                 <payment_action>authorize</payment_action>
                 <shop_id></shop_id>
@@ -52,8 +54,8 @@
                 <configurable_update_selector>.product-add-form div.product-options-wrapper</configurable_update_selector>
                 <catalog_update_selector>.product-item-details</catalog_update_selector>
                 <allowspecific>0</allowspecific>
-
                 <is_gateway>1</is_gateway>
+                <sort_order>2</sort_order>
                 <can_use_checkout>1</can_use_checkout>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
@@ -67,12 +69,13 @@
                 <active>0</active>
                 <title>MobilePay (PensoPay)</title>
                 <model>PensoPayMobilePayFacade</model>
+                <position>2</position>
                 <order_status>pending</order_status>
                 <payment_action>authorize</payment_action>
                 <allowspecific>0</allowspecific>
                 <instructions>Pay with MobilePay</instructions>
-
                 <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
                 <can_use_checkout>1</can_use_checkout>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
