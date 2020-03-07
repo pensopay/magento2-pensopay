@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction">
+            <action name="order_pensopay_capture">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="type" xsi:type="string">order_pensopay_capture</item>
+                        <item name="label" xsi:type="string" translate="true">Capture with PensoPay</item>
+                        <item name="url" xsi:type="url" path="pensopay/auxiliary/masscapture"/>
+                        <item name="confirm" xsi:type="array">
+                            <item name="title" xsi:type="string" translate="true">Capture Order(s) with PensoPay</item>
+                            <item name="message" xsi:type="string" translate="true">Are you sure you want to capture the selected order(s)?</item>
+                        </item>
+                    </item>
+                </argument>
+            </action>
+        </massaction>
+    </listingToolbar>
+</listing>
