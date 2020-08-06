@@ -2,11 +2,9 @@
 
 Module PensoPay\Payment implements integration with the PensoPay payment service provider.
 
-Currently in beta release, use at your own risk. Pull requests welcome!
+Tested in Magento 2.1.2 - 2.3.5
 
-Tested in Magento 2.1.2 - 2.3
-
-Implemented so far:
+Module supports:
 * Authorize
 * Capture 
 * Partial Capture
@@ -14,6 +12,7 @@ Implemented so far:
 * Partial Refund
 * Cancel
 * Payment Fees
+* Embedded Payment Window
 
 ### Installation
 ```
