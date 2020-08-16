@@ -56,9 +56,10 @@
                         <field id="*/*/payment_methods">specified</field>
                     </depends>
                 </field>
-                <field id="checkout_method" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="checkout_method" translate="label, comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Checkout Method</label>
                     <source_model>PensoPay\Payment\Model\Config\Source\CheckoutMethods</source_model>
+                    <comment>Embedded option only works with ClearHaus</comment>
                 </field>
                 <field id="pending_payment_order_cancel" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Automatic Cancel</label>

@@ -70,6 +70,9 @@ class PensoPayAdapter
     /** @var \Magento\Store\Model\Store $_frontStore */
     protected $_frontStore;
 
+    /** @var PensoPayHelperData $_pensoHelper */
+    protected $_pensoHelper;
+
     /**
      * PensoPayAdapter constructor.
      *
@@ -82,6 +85,7 @@ class PensoPayAdapter
      * @param PensoPayHelperCheckout $checkoutHelper
      * @param PaymentFactory $paymentFactory
      * @param StoreManagerInterface $storeManager
+     * @param PensoPayHelperData $pensoHelper
      */
     public function __construct(
         LoggerInterface $logger,
@@ -92,7 +96,8 @@ class PensoPayAdapter
         OrderRepositoryInterface $orderRepository,
         PensoPayHelperCheckout $checkoutHelper,
         PaymentFactory $paymentFactory,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        PensoPayHelperData $pensoHelper
     ) {
         $this->logger = $logger;
         $this->url = $url;
@@ -103,6 +108,7 @@ class PensoPayAdapter
         $this->_checkoutHelper = $checkoutHelper;
         $this->_paymentFactory = $paymentFactory;
         $this->_storeManager = $storeManager;
+        $this->_pensoHelper = $pensoHelper;
 
         $this->_apiKey = $this->helper->getPublicKey();
         $this->_client = new QuickPay(":{$this->_apiKey}");
@@ -185,6 +191,11 @@ class PensoPayAdapter
             'order_id' => $attributes['INCREMENT_ID'],
             'currency' => $attributes['CURRENCY'],
         ];
+
+        $storeId = $this->_pensoHelper->getStoreIdForOrderIncrement($attributes['INCREMENT_ID']);
+        if (is_numeric($storeId)) {
+            $this->setTransactionStore($storeId);
+        }
 
         $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
         if (!$isVirtualTerminal) {
@@ -366,6 +377,7 @@ class PensoPayAdapter
     public function capture(array $attributes)
     {
         try {
+            $this->setTransactionStore($attributes['STORE_ID']);
             $form = [
                 'id'     => $attributes['TXN_ID'],
                 'amount' => $attributes['AMOUNT'],
@@ -402,6 +414,12 @@ class PensoPayAdapter
         }
     }
 
+    public function setTransactionStore($storeId)
+    {
+        $this->_apiKey = $this->helper->getPublicKey($storeId);
+        $this->_client = new QuickPay(":{$this->_apiKey}");
+    }
+
     /**
      * Cancel payment
      *
@@ -412,6 +430,7 @@ class PensoPayAdapter
     {
         $this->logger->debug('Cancel payment');
         try {
+            $this->setTransactionStore($attributes['STORE_ID']);
             $form = [
                 'id' => $attributes['TXN_ID'],
             ];
@@ -442,8 +461,8 @@ class PensoPayAdapter
     public function refund(array $attributes)
     {
         $this->logger->debug('Refund payment');
-
         try {
+            $this->setTransactionStore($attributes['STORE_ID']);
             $form = [
                 'id' => $attributes['TXN_ID'],
                 'amount' => $attributes['AMOUNT'],

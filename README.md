@@ -13,6 +13,7 @@ Module supports:
 * Cancel
 * Payment Fees
 * Embedded Payment Window
+* Multiple Stores with Multiple Accounts
 
 ### Installation
 ```

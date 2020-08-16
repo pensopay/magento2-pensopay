@@ -3,10 +3,13 @@
 namespace PensoPay\Payment\Helper;
 
 use Magento\Backend\Model\Session;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DataObject;
 use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\OrderRepository;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use PensoPay\Payment\Model\Payment as PensoPayPayment;
@@ -36,14 +39,37 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var TransportBuilder $_transportBuilder */
     protected $_transportBuilder;
 
+    /** @var OrderRepository $_orderRepository */
+    protected $_orderRepository;
+
+    /** @var SearchCriteriaBuilder $_searchCriteriaBuilder */
+    protected $_searchCriteriaBuilder;
+
     public function __construct(
         Context $context,
         Session $backendSession,
-        TransportBuilder $transportBuilder
+        TransportBuilder $transportBuilder,
+        OrderRepository $orderRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         parent::__construct($context);
         $this->_backendSession = $backendSession;
         $this->_transportBuilder = $transportBuilder;
+        $this->_orderRepository = $orderRepository;
+        $this->_searchCriteriaBuilder = $searchCriteriaBuilder;
+    }
+
+    public function getStoreIdForOrderIncrement($orderIncrement)
+    {
+        $searchCriteria = $this->_searchCriteriaBuilder->addFilter('increment_id', $orderIncrement, 'eq')->create();
+        $orderList = $this->_orderRepository->getList($searchCriteria)->getItems();
+        if (count($orderList)) {
+            /** @var Order $order */
+            foreach ($orderList as $order) {
+                return $order->getStoreId();
+            }
+        }
+        return null;
     }
 
     public function getBackendSession()
@@ -155,9 +181,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->isSetFlag(self::TRANSACTION_FEE_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
 
-    public function getPublicKey()
+    public function getPublicKey($storeId = null)
     {
-        return $this->scopeConfig->getValue(self::PUBLIC_KEY_XML_PATH, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->getValue(self::PUBLIC_KEY_XML_PATH, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     public function getBrandingId()

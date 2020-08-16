@@ -45,9 +45,12 @@ class CaptureRequest implements BuilderInterface
 
         ContextHelper::assertOrderPayment($payment);
 
+        $storeId = $paymentDO->getOrder()->getStoreId();
+
         return [
             'TXN_ID'       => $payment->getLastTransId(),
             'AMOUNT'       => $amount,
+            'STORE_ID'     => $storeId
         ];
     }
 }

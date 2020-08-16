@@ -43,8 +43,11 @@ class CancelRequest implements BuilderInterface
 
         ContextHelper::assertOrderPayment($payment);
 
+        $storeId = $paymentDO->getOrder()->getStoreId();
+
         return [
             'TXN_ID' => $payment->getLastTransId(),
+            'STORE_ID' => $storeId
         ];
     }
 }

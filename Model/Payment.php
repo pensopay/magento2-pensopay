@@ -2,14 +2,17 @@
 
 namespace PensoPay\Payment\Model;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\OrderRepository;
 use PensoPay\Payment\Helper\Checkout as PensoPayCheckoutHelper;
 use PensoPay\Payment\Helper\Data as PensoPayDataHelper;
+use PensoPay\Payment\Model\Adapter\PensoPayAdapter;
 
 class Payment extends AbstractModel
 {
@@ -21,10 +24,10 @@ class Payment extends AbstractModel
     /** @var PensoPayDataHelper $_pensoPayHelper */
     protected $_pensoPayHelper;
 
-    /** @var \Magento\Sales\Model\OrderRepository $_orderRepository */
+    /** @var OrderRepository $_orderRepository */
     protected $_orderRepository;
 
-    /** @var \Magento\Framework\Api\SearchCriteriaBuilder $_searchCriteriaBuilder */
+    /** @var SearchCriteriaBuilder $_searchCriteriaBuilder */
     protected $_searchCriteriaBuilder;
 
     /** @var Adapter\PensoPayAdapter $_paymentAdapter */
@@ -85,6 +88,9 @@ class Payment extends AbstractModel
      * @param Registry $registry
      * @param PensoPayCheckoutHelper $checkoutHelper
      * @param PensoPayDataHelper $pensoPayDataHelper
+     * @param OrderRepository $orderRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param Adapter\PensoPayAdapter $paymentAdapter
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
@@ -94,9 +100,9 @@ class Payment extends AbstractModel
         Registry $registry,
         PensoPayCheckoutHelper $checkoutHelper,
         PensoPayDataHelper $pensoPayDataHelper,
-        \Magento\Sales\Model\OrderRepository $orderRepository,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
-        \PensoPay\Payment\Model\Adapter\PensoPayAdapter $paymentAdapter,
+        OrderRepository $orderRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        PensoPayAdapter $paymentAdapter,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
@@ -255,6 +261,14 @@ class Payment extends AbstractModel
             throw new \Exception(__('Reference id not found.'));
         }
 
+        $orderIncrement = $this->getOrderId();
+        $storeId = null;
+        if (!empty($orderIncrement)) {
+            $storeId = $this->_pensoPayHelper->getStoreIdForOrderIncrement($orderIncrement);
+            if (is_numeric($storeId)) {
+                $this->_paymentAdapter->setTransactionStore($storeId);
+            }
+        }
         $paymentInfo = $this->_paymentAdapter->getPayment($this->getReferenceId());
         $this->importFromRemotePayment($paymentInfo);
         $this->save();
