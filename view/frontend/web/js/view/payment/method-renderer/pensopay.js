@@ -1,9 +1,10 @@
 define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'PensoPay_Payment/js/action/redirect-on-success'
+        'PensoPay_Payment/js/action/redirect-on-success',
+        'jquery'
     ],
-    function (Component, pensopayRedirect) {
+    function (Component, pensopayRedirect, $) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -41,7 +42,7 @@ define(
                 pensopayRedirect.execute(this.getCode());
             },
             getPaymentMethodExtra: function() {
-                return '';
+                return $('.checkout-pensopay-logos').html();
             }
         });
     }

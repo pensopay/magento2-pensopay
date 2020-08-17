@@ -59,6 +59,7 @@
         </referenceBlock>
         <referenceContainer name="before.body.end">
             <block class="Magento\Framework\View\Element\Template" template="PensoPay_Payment::viabill/checkout.phtml" name="viabill-cart"/>
+            <block class="Magento\Framework\View\Element\Template" template="PensoPay_Payment::checkout/logos.phtml" name="checkout-logos"/>
         </referenceContainer>
     </body>
 </page>

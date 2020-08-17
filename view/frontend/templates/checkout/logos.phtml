@@ -1,0 +1,18 @@
+<?php
+
+use PensoPay\Payment\Helper\Checkout;
+
+/** @var PensoPay\Payment\Helper\Checkout $checkoutHelper */
+$checkoutHelper = $this->helper(Checkout::class);
+?>
+<div class="checkout-pensopay-logos" style="display: none;">
+    <?php foreach ($checkoutHelper->getPensoPayLogos() as $logo): ?>
+        <?= sprintf('<img src="%s" style="max-height: %spx" />', $this->getViewFileUrl("PensoPay_Payment::images/pensopaypayment/{$logo}.png"), $checkoutHelper->getLogoSize()) ?>
+    <?php endforeach; ?>
+</div>
+
+<?php foreach ($checkoutHelper->getSecondaryPaymentLogos() as $logo => $size): ?>
+    <div class="checkout-<?= $logo ?>-logos" style="display: none;">
+        <?= sprintf('<img src="%s" style="max-height: %spx" />', $this->getViewFileUrl("PensoPay_Payment::images/pensopaypayment/{$logo}.png"), $size) ?>
+    </div>
+<?php endforeach; ?>

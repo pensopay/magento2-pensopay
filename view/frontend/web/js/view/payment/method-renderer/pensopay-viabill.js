@@ -10,7 +10,7 @@ define(
                 return 'pensopay_viabill';
             },
             getPaymentMethodExtra: function() {
-                return $('.checkout-viabill').html();
+                return $('.checkout-viabill-logos').html() + $('.checkout-viabill').html();
             }
         });
     }

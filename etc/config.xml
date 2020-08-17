@@ -36,6 +36,8 @@
                 <checkout_method>redirect</checkout_method>
                 <privateInfoKeys></privateInfoKeys>
                 <paymentInfoKeys>cc_type,cc_number,exp_month,exp_year</paymentInfoKeys>
+                <cardlogos></cardlogos>
+                <cardlogos_size>25</cardlogos_size>
             </pensopay>
             <pensopay_viabill>
                 <active>0</active>
@@ -64,6 +66,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>40</cardlogo_size>
             </pensopay_viabill>
             <pensopay_mobilepay>
                 <active>0</active>
@@ -84,6 +88,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>35</cardlogo_size>
             </pensopay_mobilepay>
             <pensopay_dankort>
                 <active>0</active>
@@ -104,6 +110,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>35</cardlogo_size>
             </pensopay_dankort>
             <pensopay_klarnapayments>
                 <active>0</active>
@@ -124,6 +132,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>25</cardlogo_size>
             </pensopay_klarnapayments>
             <pensopay_paypal>
                 <active>0</active>
@@ -144,6 +154,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>45</cardlogo_size>
             </pensopay_paypal>
             <pensopay_vipps>
                 <active>0</active>
@@ -164,6 +176,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>25</cardlogo_size>
             </pensopay_vipps>
         </payment>
     </default>

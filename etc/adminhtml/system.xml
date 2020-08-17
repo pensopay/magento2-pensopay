@@ -90,6 +90,15 @@
                         <field id="*/*/transaction_fee">1</field>
                     </depends>
                 </field>
+                <field id="cardlogos" translate="label" type="multiselect" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logos</label>
+                    <source_model>PensoPay\Payment\Model\Config\Source\Cardlogos</source_model>
+                </field>
+                <field id="cardlogos_size" translate="label comment" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logos Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="pensopay_viabill" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>ViaBill - PensoPay</label>
@@ -147,6 +156,15 @@
                     <label>Instructions</label>
                     <comment><![CDATA[]]></comment>
                 </field>
+                <field id="cardlogo_enable" translate="label" type="select" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable CardLogo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cardlogo_size" translate="label comment" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logo Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="pensopay_mobilepay" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>MobilePay - PensoPay</label>
@@ -172,6 +190,15 @@
                 <field id="instructions" translate="label comment" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Instructions</label>
                     <comment><![CDATA[]]></comment>
+                </field>
+                <field id="cardlogo_enable" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable CardLogo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cardlogo_size" translate="label comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logo Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
             <group id="pensopay_dankort" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -199,6 +226,15 @@
                     <label>Instructions</label>
                     <comment><![CDATA[]]></comment>
                 </field>
+                <field id="cardlogo_enable" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable CardLogo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cardlogo_size" translate="label comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logo Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="pensopay_klarnapayments" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Klarna Payments - PensoPay</label>
@@ -224,6 +260,15 @@
                 <field id="instructions" translate="label comment" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Instructions</label>
                     <comment><![CDATA[]]></comment>
+                </field>
+                <field id="cardlogo_enable" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable CardLogo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cardlogo_size" translate="label comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logo Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
             <group id="pensopay_paypal" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -251,6 +296,15 @@
                     <label>Instructions</label>
                     <comment><![CDATA[]]></comment>
                 </field>
+                <field id="cardlogo_enable" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable CardLogo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cardlogo_size" translate="label comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logo Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="pensopay_vipps" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Vipps - PensoPay</label>
@@ -277,10 +331,16 @@
                     <label>Instructions</label>
                     <comment><![CDATA[]]></comment>
                 </field>
+                <field id="cardlogo_enable" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable CardLogo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cardlogo_size" translate="label comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card Logo Size</label>
+                    <comment><![CDATA[The max pixel height (without the px)]]></comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
-
-
-
         </section>
     </system>
 </config>
