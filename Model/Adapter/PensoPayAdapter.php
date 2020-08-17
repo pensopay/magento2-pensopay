@@ -13,6 +13,11 @@ use PensoPay\Payment\Model\Payment;
 use PensoPay\Payment\Model\PaymentFactory;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\DankortConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\KlarnaPaymentsConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\PayPalConfigProvider;
+use PensoPay\Payment\Model\Ui\Method\VippsConfigProvider;
+
 use Psr\Log\LoggerInterface;
 use QuickPay\QuickPay;
 use Zend_Locale;
@@ -349,6 +354,18 @@ class PensoPayAdapter
                 break;
             case MobilePayConfigProvider::CODE:
                 $parameters['payment_methods'] = 'mobilepay';
+                break;
+            case DankortConfigProvider::CODE:
+                $parameters['payment_methods'] = 'dankort';
+                break;
+            case KlarnaPaymentsConfigProvider::CODE:
+                $parameters['payment_methods'] = 'klarna-payments';
+                break;
+            case PayPalConfigProvider::CODE:
+                $parameters['payment_methods'] = 'paypal';
+                break;
+            case VippsConfigProvider::CODE:
+                $parameters['payment_methods'] = 'vipps';
                 break;
             default: //Covers default payment method - pensopay
                 $parameters['payment_methods'] = $this->helper->getPaymentMethods();

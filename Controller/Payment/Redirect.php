@@ -55,7 +55,14 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
             if ($isEmbedded) {
                 $paymentMethod = $order->getPayment()->getMethod();
-                if (in_array($paymentMethod, ['pensopay_dankort', 'pensopay_klarna', 'pensopay_mobilepay'],
+                if (in_array($paymentMethod, [
+                    'pensopay_dankort',
+                    'pensopay_klarna',
+                    'pensopay_mobilepay',
+                    'pensopay_paypal',
+                    'pensopay_klarnapayments',
+                    'pensopay_vipps'
+                ],
                     true)) { //These do not support embedded
                     $isEmbedded = false;
                 }

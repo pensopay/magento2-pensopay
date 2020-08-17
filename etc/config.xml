@@ -85,6 +85,86 @@
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
             </pensopay_mobilepay>
+            <pensopay_dankort>
+                <active>0</active>
+                <title>Dankort (PensoPay)</title>
+                <model>PensoPayDankortFacade</model>
+                <position>2</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <instructions>Pay with Dankort</instructions>
+                <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+            </pensopay_dankort>
+            <pensopay_klarnapayments>
+                <active>0</active>
+                <title>Klarna Payments (PensoPay)</title>
+                <model>PensoPayKlarnaPaymentsFacade</model>
+                <position>2</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <instructions>Pay with Klarna Payments</instructions>
+                <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+            </pensopay_klarnapayments>
+            <pensopay_paypal>
+                <active>0</active>
+                <title>PayPal (PensoPay)</title>
+                <model>PensoPayPayPalFacade</model>
+                <position>2</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <instructions>Pay with PayPal</instructions>
+                <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+            </pensopay_paypal>
+            <pensopay_vipps>
+                <active>0</active>
+                <title>Vipps (PensoPay)</title>
+                <model>PensoPayVippsFacade</model>
+                <position>2</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <instructions>Pay with Vipps</instructions>
+                <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+            </pensopay_vipps>
         </payment>
     </default>
 </config>
