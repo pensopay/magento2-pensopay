@@ -416,7 +416,11 @@ class PensoPayAdapter
 
     public function setTransactionStore($storeId)
     {
-        $this->_apiKey = $this->helper->getPublicKey($storeId);
+        $apiKey = $this->helper->getPublicKey($storeId);
+        if (empty($apiKey)) {
+            $apiKey = $this->helper->getPublicKey(null);
+        }
+        $this->_apiKey = $apiKey;
         $this->_client = new QuickPay(":{$this->_apiKey}");
     }
 
@@ -443,6 +447,13 @@ class PensoPayAdapter
             $paymentArray = $payments->asArray();
 
             $this->logger->debug(var_export($paymentArray, true));
+
+            /**
+             * This is required to prevent a few obscure errors with cancelling payments on the QP Gateway.
+             * Since cancellation itself is not vital to normal operation this is okay.
+             */
+            $paymentArray['accepted'] = true;
+            $paymentArray['id'] = '000';
 
             return $paymentArray;
         } catch (\Exception $e) {

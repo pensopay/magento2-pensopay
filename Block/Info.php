@@ -54,7 +54,7 @@ class Info extends ConfigurableInfo
             if ($payment->getId()) {
                 $firstOp = $payment->getFirstOperation();
                 if (!empty($firstOp)) {
-                    if ($firstOp['type'] == Payment::OPERATION_AUTHORIZE && $firstOp['code'] == Payment::STATUS_APPROVED) {
+                    if ($firstOp['type'] == Payment::OPERATION_AUTHORIZE && ($firstOp['code'] == Payment::STATUS_APPROVED || $firstOp['code'] == Payment::STATUS_3D_SECURE_REQUIRED)) {
                         return $payment;
                     }
                 }

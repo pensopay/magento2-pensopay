@@ -93,15 +93,17 @@ class CancelOldOrders
             } catch (\Exception $e) {
                 $logger->info('CRON: Could not cancel old order #' . $order->getIncrementId() . ' Exception: ' . $e->getMessage());
             } finally {
-                $this->_orderRepository->save($order);
+                try {
+                    $this->_orderRepository->save($order);
 
-                /** \PensoPay\Payment\Model\Payment $paymentModel */
-                $paymentModel = $this->_paymentFactory->create();
-                $paymentModel->load($order->getIncrementId(), 'order_id');
+                    /** \PensoPay\Payment\Model\Payment $paymentModel */
+                    $paymentModel = $this->_paymentFactory->create();
+                    $paymentModel->load($order->getIncrementId(), 'order_id');
 
-                if ($paymentModel->getId() && !$paymentModel->getIsVirtualterminal()) {
-                    $paymentModel->updatePaymentRemote(); //make sure we have the latest status
-                }
+                    if ($paymentModel->getId() && !$paymentModel->getIsVirtualterminal()) {
+                        $paymentModel->updatePaymentRemote(); //make sure we have the latest status
+                    }
+                } catch (\Exception $e) {}
             }
         }
         return $this;
