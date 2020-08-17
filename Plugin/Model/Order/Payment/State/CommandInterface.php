@@ -6,6 +6,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\State\CommandInterface as BaseCommandInterface;
+use PensoPay\Payment\Helper\Data;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;

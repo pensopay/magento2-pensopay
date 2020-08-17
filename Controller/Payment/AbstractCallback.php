@@ -139,13 +139,15 @@ abstract class AbstractCallback extends \Magento\Framework\App\Action\Action
 
                     //Set order to processing
 
-                    $stateProcessing = \Magento\Sales\Model\Order::STATE_PROCESSING;
+//                    $stateProcessing = \Magento\Sales\Model\Order::STATE_PROCESSING;
+//                    if ($order->getState() !== $stateProcessing) {
+//                        $order->setState($stateProcessing)
+//                            ->setStatus($order->getConfig()->getStateDefaultStatus($stateProcessing))
+//                            ->save();
+//                    }
 
-                    if ($order->getState() !== $stateProcessing) {
-                        $order->setState($stateProcessing)
-                            ->setStatus($order->getConfig()->getStateDefaultStatus($stateProcessing))
-                            ->save();
-                    }
+                    $this->_pensoPayHelper->setNewOrderStatus($order);
+                    $order->save();
 
                     //Send order email
                     if (!$order->getEmailSent()) {

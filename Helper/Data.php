@@ -8,6 +8,7 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DataObject;
 use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Store\Model\ScopeInterface;
@@ -32,6 +33,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const TRANSACTION_FEE_XML_PATH = 'payment/pensopay/transaction_fee';
     const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
     const TEXT_ON_STATEMENT_XML_PATH = 'payment/pensopay/text_on_statement';
+    const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay/new_order_status';
 
     /** @var Session $_backendSession */
     protected $_backendSession;
@@ -142,6 +144,24 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return true;
     }
 
+    public function setNewOrderStatus(OrderInterface $order)
+    {
+        $status = $this->getNewOrderStatus();
+        switch ($status) {
+            case 'processing':
+                $orderState = Order::STATE_PROCESSING;
+                break;
+            case 'pending':
+            default:
+                $orderState = Order::STATE_NEW;
+                break;
+        }
+        if ($orderState) {
+            $order->setState($orderState)
+                ->setStatus($order->getConfig()->getStateDefaultStatus($orderState));
+        }
+    }
+
     /**
      * Get payment methods
      *
@@ -199,5 +219,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getTextOnStatement()
     {
         return $this->scopeConfig->getValue(self::TEXT_ON_STATEMENT_XML_PATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getNewOrderStatus()
+    {
+        return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
 }
