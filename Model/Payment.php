@@ -53,6 +53,7 @@ class Payment extends AbstractModel
     const OPERATION_AUTHORIZE = 'authorize';
     const OPERATION_CANCEL = 'cancel';
     const OPERATION_REFUND = 'refund';
+    const OPERATION_MOBILEPAY_SESSION = 'session';
 
     const FRAUD_PROBABILITY_HIGH = 'high';
     const FRAUD_PROBABILITY_NONE = 'none';
