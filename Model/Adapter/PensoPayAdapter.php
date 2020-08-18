@@ -343,7 +343,7 @@ class PensoPayAdapter
             }
         } else {
             if (!$isVirtualTerminal) {
-                $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction');
+                $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => base64_encode($attributes['INCREMENT_ID'])]]);
                 $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/cancelAction');
             }
         }
