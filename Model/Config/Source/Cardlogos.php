@@ -18,6 +18,10 @@ class Cardlogos implements ArrayInterface
                 'label' => __('VISA')
             ],
             [
+                'value' => 'dankort',
+                'label' => __('Dankort')
+            ],
+            [
                 'value' => 'visaelectron',
                 'label' => __('VISA Electron')
             ],
