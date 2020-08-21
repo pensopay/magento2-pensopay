@@ -220,10 +220,6 @@ class PensoPayAdapter
 
             $order = $this->orderRepository->get($attributes['ORDER_ID']);
 
-            $form['shipping'] = [
-                'amount' => $order->getShippingInclTax() * 100
-            ];
-
             $billingAddress = $attributes['BILLING_ADDRESS'];
             $form['invoice_address'] = [];
             $form['invoice_address']['name'] = $billingAddress->getFirstName() . ' ' . $billingAddress->getLastName();
@@ -240,6 +236,12 @@ class PensoPayAdapter
 
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
+            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
+                $form['shipping'] = [
+                    'amount' => $order->getShippingInclTax() * 100
+                ];
+            }
+
             //Build basket array
             $items = $attributes['ITEMS'];
             $form['basket'] = [];
@@ -252,6 +254,17 @@ class PensoPayAdapter
                     'vat_rate' => $item->getTaxPercent() / 100,
                 ];
             }
+
+            if ($attributes['PAYMENT_METHOD'] === KlarnaPaymentsConfigProvider::CODE) {
+                $form['basket'][] = [
+                    'qty' => 1,
+                    'item_no' => 'shipping',
+                    'item_name' => 'Shipping',
+                    'item_price' => (int)($order->getShippingInclTax() * 100),
+                    'vat_rate' => 0,
+                ];
+            }
+
         } else {
             $form['basket'] = [
                 [
