@@ -236,11 +236,11 @@ class PensoPayAdapter
 
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
-            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
+//            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
                 $form['shipping'] = [
                     'amount' => $order->getShippingInclTax() * 100
                 ];
-            }
+//            }
 
             //Build basket array
             $items = $attributes['ITEMS'];
@@ -255,15 +255,15 @@ class PensoPayAdapter
                 ];
             }
 
-            if ($attributes['PAYMENT_METHOD'] === KlarnaPaymentsConfigProvider::CODE) {
-                $form['basket'][] = [
-                    'qty' => 1,
-                    'item_no' => 'shipping',
-                    'item_name' => 'Shipping',
-                    'item_price' => (int)($order->getShippingInclTax() * 100),
-                    'vat_rate' => 0,
-                ];
-            }
+//            if ($attributes['PAYMENT_METHOD'] === KlarnaPaymentsConfigProvider::CODE) {
+//                $form['basket'][] = [
+//                    'qty' => 1,
+//                    'item_no' => 'shipping',
+//                    'item_name' => 'Shipping',
+//                    'item_price' => (int)($order->getShippingInclTax() * 100),
+//                    'vat_rate' => 0,
+//                ];
+//            }
 
         } else {
             $form['basket'] = [
