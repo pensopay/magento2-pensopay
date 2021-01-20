@@ -33,6 +33,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const TRANSACTION_FEE_XML_PATH = 'payment/pensopay/transaction_fee';
     const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
     const TEXT_ON_STATEMENT_XML_PATH = 'payment/pensopay/text_on_statement';
+    const NEW_ORDER_STATUS_BEFORE_XML_PATH = 'payment/pensopay/new_order_status_before_payment';
     const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay/new_order_status';
 
     /** @var Session $_backendSession */
@@ -144,21 +145,35 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return true;
     }
 
-    public function setNewOrderStatus(OrderInterface $order)
+    public function setNewOrderStatus(OrderInterface $order, $beforePayment = false)
     {
-        $status = $this->getNewOrderStatus();
-        switch ($status) {
-            case 'processing':
-                $orderState = Order::STATE_PROCESSING;
-                break;
-            case 'pending':
-            default:
-                $orderState = Order::STATE_NEW;
-                break;
+        if ($beforePayment) {
+            $status = $this->getNewOrderStatusBeforePayment();
+        } else {
+            $status = $this->getNewOrderStatus();
         }
-        if ($orderState) {
-            $order->setState($orderState)
-                ->setStatus($order->getConfig()->getStateDefaultStatus($orderState));
+
+        $states = [
+            Order::STATE_NEW,
+            Order::STATE_PROCESSING,
+            Order::STATE_COMPLETE,
+            Order::STATE_CLOSED,
+            Order::STATE_CANCELED,
+            Order::STATE_HOLDED
+        ];
+
+        $state = false;
+        foreach ($states as $_state) {
+            $stateStatuses = $order->getConfig()->getStateStatuses($_state);
+            if (array_key_exists($status, $stateStatuses)) {
+                $state = $_state;
+                break;
+            }
+        }
+
+        if ($state) {
+            $order->setState($state)
+                ->setStatus($status);
         }
     }
 
@@ -224,5 +239,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getNewOrderStatus()
     {
         return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS_XML_PATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getNewOrderStatusBeforePayment()
+    {
+        return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS_BEFORE_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
 }

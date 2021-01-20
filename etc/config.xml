@@ -38,6 +38,7 @@
                 <paymentInfoKeys>cc_type,cc_number,exp_month,exp_year</paymentInfoKeys>
                 <cardlogos></cardlogos>
                 <cardlogos_size>25</cardlogos_size>
+                <new_order_status_before_payment>pending</new_order_status_before_payment>
                 <new_order_status>processing</new_order_status>
             </pensopay>
             <pensopay_viabill>

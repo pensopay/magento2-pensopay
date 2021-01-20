@@ -61,6 +61,10 @@
                     <source_model>PensoPay\Payment\Model\Config\Source\CheckoutMethods</source_model>
                     <comment>Embedded option only works with ClearHaus</comment>
                 </field>
+                <field id="new_order_status_before_payment" translate="label" type="select" sortOrder="115" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New Order Status before Payment</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
                 <field id="new_order_status" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>New Order Status after Payment</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
