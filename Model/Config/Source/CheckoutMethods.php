@@ -22,10 +22,10 @@ class CheckoutMethods implements ArrayInterface
                 'value' => self::METHOD_REDIRECT,
                 'label' => __('Redirect')
             ],
-            [
-                'value' => self::METHOD_EMBEDDED,
-                'label' => __('Embedded')
-            ]
+//            [
+//                'value' => self::METHOD_EMBEDDED,
+//                'label' => __('Embedded')
+//            ]
 //            [
 //                'value' => self::METHOD_IFRAME,
 //                'label' => __('IFrame')
@@ -42,7 +42,7 @@ class CheckoutMethods implements ArrayInterface
     {
         return [
             self::METHOD_REDIRECT => __('Redirect'),
-            self::METHOD_EMBEDDED => __('Embedded'),
+//            self::METHOD_EMBEDDED => __('Embedded'),
 //            self::METHOD_IFRAME => __('Iframe')
         ];
     }

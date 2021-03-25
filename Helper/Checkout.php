@@ -86,10 +86,7 @@ class Checkout extends AbstractHelper
      */
     public function isCheckoutEmbedded()
     {
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_CHECKOUT_METHOD,
-            ScopeInterface::SCOPE_STORE
-        ) === CheckoutMethods::METHOD_EMBEDDED;
+        return false;
     }
 
     /**

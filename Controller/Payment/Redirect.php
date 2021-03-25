@@ -49,9 +49,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $order = $this->_pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
 
-//            $isIframe = $this->_pensopayCheckoutHelper->isCheckoutIframe();
             $isIframe = false; //Deprecated
-            $isEmbedded = $this->_pensopayCheckoutHelper->isCheckoutEmbedded();
+            $isEmbedded = false; //Deprecated
 
             if ($isEmbedded) {
                 $paymentMethod = $order->getPayment()->getMethod();
