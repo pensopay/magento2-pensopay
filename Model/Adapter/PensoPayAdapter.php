@@ -245,12 +245,13 @@ class PensoPayAdapter
             //Build basket array
             $items = $attributes['ITEMS'];
             $form['basket'] = [];
+            /** @var \Magento\Sales\Model\Order\Item $item */
             foreach ($items as $item) {
                 $form['basket'][] = [
                     'qty' => (int)$item->getQtyOrdered(),
                     'item_no' => $item->getSku(),
                     'item_name' => $item->getName(),
-                    'item_price' => (float)(round((($item->getBasePrice() - $item->getBaseDiscountAmount()) + ($item->getBaseTaxAmount() / $item->getQtyOrdered())), 2) * 100),
+                    'item_price' => (float)(round((($item->getBasePrice() - ($item->getBaseDiscountAmount() / $item->getQtyOrdered())) + ($item->getBaseTaxAmount() / $item->getQtyOrdered())), 2) * 100),
                     'vat_rate' => $item->getTaxPercent() / 100
                 ];
             }
