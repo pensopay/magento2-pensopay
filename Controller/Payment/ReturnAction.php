@@ -50,8 +50,6 @@ class ReturnAction extends Action
                     $this->_session->setLastQuoteId($order->getQuoteId());
                     $this->_session->setLastRealOrderId($order->getIncrementId());
                     $this->_session->setLastOrderId($order->getIncrementId());
-                } else {
-                    die('tine, let me know about this');
                 }
             }
         }
