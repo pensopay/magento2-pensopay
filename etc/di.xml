@@ -64,6 +64,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayAnydayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">AnydayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensoPayAnydayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -81,6 +82,13 @@
     <virtualType name="PensoPayAnydayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AnydayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="currency" xsi:type="string">PensoPay\Payment\Gateway\Validator\Anyday\CurrencyValidator</item>
+            </argument>
         </arguments>
     </virtualType>
 
