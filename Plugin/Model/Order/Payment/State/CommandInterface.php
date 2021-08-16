@@ -7,6 +7,7 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\State\CommandInterface as BaseCommandInterface;
 use PensoPay\Payment\Helper\Data;
+use PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
@@ -37,6 +38,7 @@ class CommandInterface
         if (in_array($payment->getMethod(), [
             PensoPayConfigProvider::CODE,
             ViabillConfigProvider::CODE,
+            AnydayConfigProvider::CODE,
             MobilePayConfigProvider::CODE,
             DankortConfigProvider::CODE,
             KlarnaPaymentsConfigProvider::CODE,

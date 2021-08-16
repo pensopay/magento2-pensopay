@@ -11,6 +11,7 @@ use PensoPay\Payment\Helper\Checkout as PensoPayHelperCheckout;
 use PensoPay\Payment\Helper\Data as PensoPayHelperData;
 use PensoPay\Payment\Model\Payment;
 use PensoPay\Payment\Model\PaymentFactory;
+use PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\DankortConfigProvider;
@@ -365,6 +366,9 @@ class PensoPayAdapter
         switch ($attributes['PAYMENT_METHOD']) {
             case ViabillConfigProvider::CODE:
                 $parameters['payment_methods'] = 'viabill';
+                break;
+            case AnydayConfigProvider::CODE:
+                $parameters['payment_methods'] = 'anyday-split';
                 break;
             case MobilePayConfigProvider::CODE:
                 $parameters['payment_methods'] = 'mobilepay';

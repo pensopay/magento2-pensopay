@@ -56,6 +56,34 @@
         </arguments>
     </virtualType>
 
+    <!-- Anyday -->
+    <virtualType name="PensoPayAnydayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider::CODE</argument>
+            <argument name="infoBlockType" xsi:type="string">PensoPay\Payment\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensoPayAnydayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayAnydayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensoPayAnydayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayAnydayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensoPayAnydayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayAnydayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
     <!-- MobilePay -->
     <virtualType name="PensoPayMobilePayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>

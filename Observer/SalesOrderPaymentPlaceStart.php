@@ -4,6 +4,7 @@ namespace PensoPay\Payment\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
@@ -28,6 +29,7 @@ class SalesOrderPaymentPlaceStart implements ObserverInterface
         if (in_array($payment->getMethod(), [
             PensoPayConfigProvider::CODE,
             ViabillConfigProvider::CODE,
+            AnydayConfigProvider::CODE,
             MobilePayConfigProvider::CODE,
             DankortConfigProvider::CODE,
             KlarnaPaymentsConfigProvider::CODE,

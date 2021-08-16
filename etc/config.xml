@@ -71,6 +71,36 @@
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
             </pensopay_viabill>
+            <pensopay_anyday>
+                <active>0</active>
+                <title>Anyday (PensoPay)</title>
+                <model>PensoPayAnydayFacade</model>
+                <position>1</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <shop_id></shop_id>
+                <instructions>Pay with Anyday</instructions>
+                <show_in_product>1</show_in_product>
+                <show_in_category>1</show_in_category>
+                <show_in_cart>1</show_in_cart>
+                <show_in_checkout>1</show_in_checkout>
+                <bundle_update_selector>.product-options-wrapper input, .product-options-wrapper select</bundle_update_selector>
+                <configurable_update_selector>.product-add-form div.product-options-wrapper</configurable_update_selector>
+                <catalog_update_selector>.product-item-details</catalog_update_selector>
+                <allowspecific>0</allowspecific>
+                <is_gateway>1</is_gateway>
+                <sort_order>2</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>40</cardlogo_size>
+            </pensopay_anyday>
             <pensopay_mobilepay>
                 <active>0</active>
                 <title>MobilePay (PensoPay)</title>

@@ -6,6 +6,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order as OrderAlias;
 use PensoPay\Payment\Helper\Data;
+use PensoPay\Payment\Model\Ui\Method\AnydayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\MobilePayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\ViabillConfigProvider;
@@ -42,6 +43,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         if (in_array($payment->getMethod(), [
             PensoPayConfigProvider::CODE,
             ViabillConfigProvider::CODE,
+            AnydayConfigProvider::CODE,
             MobilePayConfigProvider::CODE,
             DankortConfigProvider::CODE,
             KlarnaPaymentsConfigProvider::CODE,

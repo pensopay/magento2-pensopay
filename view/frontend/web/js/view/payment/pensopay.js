@@ -18,6 +18,10 @@ define(
                 component: 'PensoPay_Payment/js/view/payment/method-renderer/pensopay-viabill'
             },
             {
+                type: 'pensopay_anyday',
+                component: 'PensoPay_Payment/js/view/payment/method-renderer/pensopay-anyday'
+            },
+            {
                 type: 'pensopay_mobilepay',
                 component: 'PensoPay_Payment/js/view/payment/method-renderer/pensopay-mobilepay'
             },
