@@ -248,6 +248,9 @@ class PensoPayAdapter
             $form['basket'] = [];
             /** @var \Magento\Sales\Model\Order\Item $item */
             foreach ($items as $item) {
+                if (!$item->getPrice() && $item->getParentItemId()) {
+                    continue; //Simples of configurables that carry no prices aren't wanted
+                }
                 $form['basket'][] = [
                     'qty' => (int)$item->getQtyOrdered(),
                     'item_no' => $item->getSku(),
