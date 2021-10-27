@@ -11,8 +11,7 @@ use Magento\Store\Model\ScopeInterface;
 use PensoPay\Payment\Model\Payment;
 use PensoPay\Payment\Model\PaymentFactory;
 use PensoPay\Payment\Model\ResourceModel\Payment\Collection;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream;
+use Psr\Log\LoggerInterface;
 
 class CancelOldOrders
 {
@@ -31,6 +30,9 @@ class CancelOldOrders
     /** @var PaymentFactory $_paymentFactory */
     protected $_paymentFactory;
 
+    /** @var LoggerInterface $_logger */
+    protected $_logger;
+
     /**
      * CancelOldOrders constructor.
      * @param Collection $paymentCollection
@@ -43,13 +45,15 @@ class CancelOldOrders
         ScopeConfigInterface $scopeConfig,
         CollectionFactory $orderCollectionFactory,
         OrderRepository $orderRepository,
-        PaymentFactory $paymentFactory
+        PaymentFactory $paymentFactory,
+        LoggerInterface $logger
     ) {
         $this->_paymentCollection = $paymentCollection;
         $this->_scopeConfig = $scopeConfig;
         $this->_orderCollectionFactory = $orderCollectionFactory;
         $this->_orderRepository = $orderRepository;
         $this->_paymentFactory = $paymentFactory;
+        $this->_logger = $logger;
     }
 
     /**
@@ -57,11 +61,6 @@ class CancelOldOrders
      */
     public function execute()
     {
-        //Ease of use over custom logger
-        $writer = new Stream(BP . '/var/log/pensopay-payments.log');
-        $logger = new Logger();
-        $logger->addWriter($writer);
-
         //Disabled from admin
         if (!$this->_scopeConfig->isSetFlag('payment/pensopay/pending_payment_order_cancel', ScopeInterface::SCOPE_STORE)) {
             return $this;
@@ -84,14 +83,14 @@ class CancelOldOrders
             try {
                 if ($order->canCancel()) {
                     $order->cancel();
-                    $logger->info('CRON: Canceled old order #' . $order->getIncrementId());
+                    $this->_logger->info('CRON: Canceled old order #' . $order->getIncrementId());
                 } else {
                     throw new \Exception('Order is in a non-cancellable state.');
                 }
             } catch (CommandException $commandException) {
-                $logger->info('CRON: Could not cancel payment for order #' . $order->getIncrementId() . ' Exception: ' . $commandException->getMessage());
+                $this->_logger->error('CRON: Could not cancel payment for order #' . $order->getIncrementId() . ' Exception: ' . $commandException->getMessage());
             } catch (\Exception $e) {
-                $logger->info('CRON: Could not cancel old order #' . $order->getIncrementId() . ' Exception: ' . $e->getMessage());
+                $this->_logger->error('CRON: Could not cancel old order #' . $order->getIncrementId() . ' Exception: ' . $e->getMessage());
             } finally {
                 try {
                     $this->_orderRepository->save($order);
