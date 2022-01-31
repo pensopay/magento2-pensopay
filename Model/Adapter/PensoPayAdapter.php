@@ -3,6 +3,7 @@
 namespace PensoPay\Payment\Model\Adapter;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -79,20 +80,9 @@ class PensoPayAdapter
     /** @var PensoPayHelperData $_pensoHelper */
     protected $_pensoHelper;
 
-    /**
-     * PensoPayAdapter constructor.
-     *
-     * @param LoggerInterface $logger
-     * @param UrlInterface $url
-     * @param PensoPayHelperData $helper
-     * @param ScopeConfigInterface $scopeConfig
-     * @param ResolverInterface $resolver
-     * @param OrderRepositoryInterface $orderRepository
-     * @param PensoPayHelperCheckout $checkoutHelper
-     * @param PaymentFactory $paymentFactory
-     * @param StoreManagerInterface $storeManager
-     * @param PensoPayHelperData $pensoHelper
-     */
+    /** @var EncryptorInterface $_encryptor */
+    protected $_encryptor;
+
     public function __construct(
         LoggerInterface $logger,
         UrlInterface $url,
@@ -103,7 +93,8 @@ class PensoPayAdapter
         PensoPayHelperCheckout $checkoutHelper,
         PaymentFactory $paymentFactory,
         StoreManagerInterface $storeManager,
-        PensoPayHelperData $pensoHelper
+        PensoPayHelperData $pensoHelper,
+        EncryptorInterface $encryptor
     ) {
         $this->logger = $logger;
         $this->url = $url;
@@ -115,6 +106,7 @@ class PensoPayAdapter
         $this->_paymentFactory = $paymentFactory;
         $this->_storeManager = $storeManager;
         $this->_pensoHelper = $pensoHelper;
+        $this->_encryptor = $encryptor;
 
         $this->_apiKey = $this->helper->getPublicKey();
         $this->_client = new QuickPay(":{$this->_apiKey}");
@@ -361,7 +353,7 @@ class PensoPayAdapter
             }
         } else {
             if (!$isVirtualTerminal) {
-                $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => base64_encode($attributes['INCREMENT_ID'])]]);
+                $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => $this->_encryptor->encrypt($attributes['INCREMENT_ID'])]]);
                 $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/cancelAction');
             }
         }

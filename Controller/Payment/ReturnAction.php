@@ -5,6 +5,7 @@ namespace PensoPay\Payment\Controller\Payment;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 
@@ -16,15 +17,19 @@ class ReturnAction extends Action
     /** @var OrderFactory $_orderFactory */
     protected $_orderFactory;
 
+    protected $_encryptor;
+
     public function __construct(
         Context $context,
         Session $session,
-        OrderFactory $orderFactory
+        OrderFactory $orderFactory,
+        EncryptorInterface $encryptor
     ) {
         parent::__construct($context);
 
         $this->_session = $session;
         $this->_orderFactory = $orderFactory;
+        $this->_encryptor = $encryptor;
     }
 
     /**
@@ -39,7 +44,7 @@ class ReturnAction extends Action
         if (!$lastRealOrderId) {
             $orderHash = $this->getRequest()->getParam('ori');
             if (!empty($orderHash)) {
-                $orderIncrementId = base64_decode($orderHash);
+                $orderIncrementId = $this->_encryptor->decrypt($orderHash);
 
                 /** @var Order $order */
                 $order = $this->_orderFactory->create();
