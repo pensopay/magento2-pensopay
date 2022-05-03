@@ -19,6 +19,7 @@ use PensoPay\Payment\Model\Ui\Method\DankortConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\KlarnaPaymentsConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\PayPalConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\VippsConfigProvider;
+use Magento\Framework\Event\ManagerInterface as EventManager;
 
 use Psr\Log\LoggerInterface;
 use QuickPay\QuickPay;
@@ -83,6 +84,10 @@ class PensoPayAdapter
     /** @var EncryptorInterface $_encryptor */
     protected $_encryptor;
 
+    /** @var EventManager $_eventManager */
+    protected $_eventManager;
+
+
     public function __construct(
         LoggerInterface $logger,
         UrlInterface $url,
@@ -94,7 +99,8 @@ class PensoPayAdapter
         PaymentFactory $paymentFactory,
         StoreManagerInterface $storeManager,
         PensoPayHelperData $pensoHelper,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        EventManager $eventManager
     ) {
         $this->logger = $logger;
         $this->url = $url;
@@ -107,6 +113,7 @@ class PensoPayAdapter
         $this->_storeManager = $storeManager;
         $this->_pensoHelper = $pensoHelper;
         $this->_encryptor = $encryptor;
+        $this->_eventManager = $eventManager;
 
         $this->_apiKey = $this->helper->getPublicKey();
         $this->_client = new QuickPay(":{$this->_apiKey}");
@@ -195,6 +202,7 @@ class PensoPayAdapter
             $this->setTransactionStore($storeId);
         }
 
+        $order = false;
         $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
         if (!$isVirtualTerminal) {
             $shippingAddress = $attributes['SHIPPING_ADDRESS'];
@@ -273,6 +281,15 @@ class PensoPayAdapter
                 ]
             ];
         }
+
+        $dataObject = new \Magento\Framework\DataObject();
+        $dataObject->setForm($form);
+        $dataObject->setOrder($order);
+
+        $this->_eventManager->dispatch('pensopay_formdata_construct_after', ['data_object' => $dataObject]);
+
+        $form = $dataObject->getForm();
+
         return $form;
     }
 
