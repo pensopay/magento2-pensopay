@@ -2,7 +2,7 @@
 
 Module PensoPay\Payment implements integration with the PensoPay payment service provider.
 
-Tested in Magento 2.1.2 - 2.4.2
+Tested in Magento 2.1.2 - 2.4.4
 
 Module supports:
 * Authorize
