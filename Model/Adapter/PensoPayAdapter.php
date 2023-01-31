@@ -395,7 +395,7 @@ class PensoPayAdapter
                 $parameters['payment_methods'] = 'paypal';
                 break;
             case VippsConfigProvider::CODE:
-                $parameters['payment_methods'] = 'vipps';
+                $parameters['payment_methods'] = 'vipps,vippspsp';
                 break;
             default: //Covers default payment method - pensopay
                 $parameters['payment_methods'] = $this->helper->getPaymentMethods();
