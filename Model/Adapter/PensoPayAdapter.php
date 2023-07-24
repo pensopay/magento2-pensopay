@@ -249,7 +249,7 @@ class PensoPayAdapter
                     'qty' => (int)$item->getQtyOrdered(),
                     'item_no' => $item->getSku(),
                     'item_name' => $item->getName(),
-                    'item_price' => (float)(round((($item->getBasePrice() - ($item->getBaseDiscountAmount() / $item->getQtyOrdered())) + ($item->getBaseTaxAmount() / $item->getQtyOrdered())), 2) * 100),
+                    'item_price' => (float)(round(($item->getBaseRowTotalInclTax() - $item->getBaseDiscountAmount()) / $item->getQtyOrdered(), 2) * 100),
                     'vat_rate' => $item->getTaxPercent() / 100
                 ];
             }
