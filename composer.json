@@ -4,12 +4,14 @@
   "authors": [
     {
       "name": "Rasmus Bech",
-      "email": "me@rbech.com"
+      "email": "rb@pensopay.com"
     }
   ],
   "require": {
-    "php": "~5.6|7.*|8.*",
-    "quickpay/quickpay-php-client": "1.0.*"
+    "php": ">=7.3",
+    "symfony/intl": "^5.0",
+    "quickpay/quickpay-php-client": "^1.0",
+    "ext-json": "*"
   },
   "type": "magento2-module",
   "license": [
