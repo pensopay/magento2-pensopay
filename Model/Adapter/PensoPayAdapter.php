@@ -23,7 +23,7 @@ use Magento\Framework\Event\ManagerInterface as EventManager;
 
 use Psr\Log\LoggerInterface;
 use QuickPay\QuickPay;
-use Zend_Locale;
+use Symfony\Component\Intl\Countries;
 
 /**
  * Class PensoPayAdapter
@@ -212,10 +212,7 @@ class PensoPayAdapter
             $form['shipping_address']['city'] = $shippingAddress->getCity();
             $form['shipping_address']['zip_code'] = $shippingAddress->getPostcode();
             $form['shipping_address']['region'] = $shippingAddress->getRegionCode();
-            $form['shipping_address']['country_code'] = Zend_Locale::getTranslation(
-                $shippingAddress->getCountryId(),
-                'Alpha3ToTerritory'
-            );
+            $form['shipping_address']['country_code'] = Countries::getAlpha3Code($shippingAddress->getCountryId());
             $form['shipping_address']['phone_number'] = $shippingAddress->getTelephone();
             $form['shipping_address']['email'] = $shippingAddress->getEmail();
 
@@ -228,10 +225,7 @@ class PensoPayAdapter
             $form['invoice_address']['city'] = $billingAddress->getCity();
             $form['invoice_address']['zip_code'] = $billingAddress->getPostcode();
             $form['invoice_address']['region'] = $billingAddress->getRegionCode();
-            $form['invoice_address']['country_code'] = Zend_Locale::getTranslation(
-                $billingAddress->getCountryId(),
-                'Alpha3ToTerritory'
-            );
+            $form['invoice_address']['country_code'] = Countries::getAlpha3Code($billingAddress->getCountryId());
             $form['invoice_address']['phone_number'] = $billingAddress->getTelephone();
             $form['invoice_address']['email'] = $billingAddress->getEmail();
 

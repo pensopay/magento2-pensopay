@@ -6,7 +6,6 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Sales\Model\Order;
-use Zend\Json\Json;
 
 class Callback extends Action
 {
@@ -77,7 +76,7 @@ class Callback extends Action
         $body = $this->getRequest()->getContent();
 
         try {
-            $response = Json::decode($body);
+            $response = json_decode($body);
 
             //Fetch private key from config and validate checksum
             $key = $this->_pensoPayHelper->getPrivateKey();
