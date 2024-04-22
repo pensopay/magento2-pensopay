@@ -9,7 +9,7 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 class ConfigProvider implements ConfigProviderInterface
 {
 
-    protected $_code;
+    protected string $_code;
 
     /**
      * Retrieve assoc array of checkout configuration

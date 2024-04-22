@@ -59,7 +59,6 @@
                 <field id="checkout_method" translate="label, comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Checkout Method</label>
                     <source_model>PensoPay\Payment\Model\Config\Source\CheckoutMethods</source_model>
-                    <comment>Embedded option only works with ClearHaus</comment>
                 </field>
                 <field id="new_order_status_before_payment" translate="label" type="select" sortOrder="115" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>New Order Status before Payment</label>

@@ -49,42 +49,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $order = $this->_pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
 
-            $isIframe = false; //Deprecated
-            $isEmbedded = false; //Deprecated
-
-            if ($isEmbedded) {
-                $paymentMethod = $order->getPayment()->getMethod();
-                if (in_array($paymentMethod, [
-                    'pensopay_dankort',
-                    'pensopay_klarna',
-                    'pensopay_mobilepay',
-                    'pensopay_paypal',
-                    'pensopay_klarnapayments',
-                    'pensopay_vipps'
-                ],
-                    true)) { //These do not support embedded
-                    $isEmbedded = false;
-                }
-            }
-
-            if ($isEmbedded) {
-                $paymentData = [
-                    'payment_link' => $paymentLink,
-                    'total' => $order->getGrandTotal(),
-                    'currency' => $order->getOrderCurrencyCode(),
-                    'redirecturl' => $this->_url->getUrl('pensopay/payment/returnAction'),
-                    'cancelurl' => $this->_url->getUrl('pensopay/payment/embeddedCancel')
-                ];
-
-                $this->_pensopayCheckoutHelper->getCheckoutSession()->setPaymentData(serialize($paymentData));
-                return $this->_redirect('pensopay/payment/embedded');
-            }
-
-            if ($isIframe) {
-                $this->_pensopayCheckoutHelper->getCheckoutSession()->setPaymentWindowUrl($paymentLink);
-                return $this->_redirect('pensopay/payment/iframe');
-            }
-
             return $this->_redirect($paymentLink);
         } catch (\Exception $e) {
             $this->messageManager->addException($e, __('Something went wrong, please try again later'));

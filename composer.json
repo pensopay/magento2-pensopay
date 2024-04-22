@@ -5,6 +5,10 @@
     {
       "name": "Rasmus Bech",
       "email": "rb@pensopay.com"
+    },
+    {
+      "name": "Dimitris Preketes",
+      "email": "d.preketes@codecave.eu"
     }
   ],
   "require": {

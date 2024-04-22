@@ -7,5 +7,5 @@ namespace PensoPay\Payment\Model\Ui\Method;
 final class ViabillConfigProvider extends \PensoPay\Payment\Model\Ui\ConfigProvider
 {
     const CODE = 'pensopay_viabill';
-    protected $_code = self::CODE;
+    protected string $_code = self::CODE;
 }

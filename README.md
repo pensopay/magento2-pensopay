@@ -22,4 +22,10 @@ php bin/magento setup:upgrade
 php bin/magento setup:di:compile
 ``` 
 
+### Hyva Theme Support
+```
+composer require hyva-themes/magento2-hyva-checkout-pensopay-payment
+```
+
+
 **Please note that FTP installation will not work as this module has requirements that will be auto installed when using composer**

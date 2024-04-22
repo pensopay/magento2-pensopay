@@ -7,8 +7,6 @@ use Magento\Framework\Option\ArrayInterface;
 class CheckoutMethods implements ArrayInterface
 {
     const METHOD_REDIRECT = 'redirect';
-    const METHOD_IFRAME   = 'iframe';
-    const METHOD_EMBEDDED = 'embedded';
 
     /**
      * Options getter
@@ -21,15 +19,7 @@ class CheckoutMethods implements ArrayInterface
             [
                 'value' => self::METHOD_REDIRECT,
                 'label' => __('Redirect')
-            ],
-//            [
-//                'value' => self::METHOD_EMBEDDED,
-//                'label' => __('Embedded')
-//            ]
-//            [
-//                'value' => self::METHOD_IFRAME,
-//                'label' => __('IFrame')
-//            ]
+            ]
         ];
     }
 
@@ -41,9 +31,7 @@ class CheckoutMethods implements ArrayInterface
     public function toArray()
     {
         return [
-            self::METHOD_REDIRECT => __('Redirect'),
-//            self::METHOD_EMBEDDED => __('Embedded'),
-//            self::METHOD_IFRAME => __('Iframe')
+            self::METHOD_REDIRECT => __('Redirect')
         ];
     }
 }

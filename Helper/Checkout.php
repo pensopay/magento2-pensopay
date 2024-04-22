@@ -71,25 +71,6 @@ class Checkout extends AbstractHelper
     }
 
     /**
-     * @return bool
-     */
-    public function isCheckoutIframe()
-    {
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_CHECKOUT_METHOD,
-            ScopeInterface::SCOPE_STORE
-        ) === CheckoutMethods::METHOD_IFRAME;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCheckoutEmbedded()
-    {
-        return false;
-    }
-
-    /**
      * @return CheckoutSession
      */
     public function getCheckoutSession()

@@ -7,5 +7,5 @@ namespace PensoPay\Payment\Model\Ui\Method;
 final class VippsConfigProvider extends \PensoPay\Payment\Model\Ui\ConfigProvider
 {
     const CODE = 'pensopay_vipps';
-    protected $_code = self::CODE;
+    protected string $_code = self::CODE;
 }

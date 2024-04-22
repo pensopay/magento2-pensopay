@@ -7,5 +7,5 @@ namespace PensoPay\Payment\Model\Ui\Method;
 final class PayPalConfigProvider extends \PensoPay\Payment\Model\Ui\ConfigProvider
 {
     const CODE = 'pensopay_paypal';
-    protected $_code = self::CODE;
+    protected string $_code = self::CODE;
 }

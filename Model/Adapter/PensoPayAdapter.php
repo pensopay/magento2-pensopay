@@ -355,18 +355,9 @@ class PensoPayAdapter
             $parameters['auto_fee'] = $this->helper->getIsTransactionFee();
         }
 
-        $isIframe = $this->_checkoutHelper->isCheckoutIframe();
-
-        if ($isIframe) {
-            if (!$isVirtualTerminal) {
-                $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/iframeCancel');
-                $parameters['framed'] = true;
-            }
-        } else {
-            if (!$isVirtualTerminal) {
-                $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => $this->_encryptor->encrypt($attributes['INCREMENT_ID'])]]);
-                $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/cancelAction');
-            }
+        if (!$isVirtualTerminal) {
+            $parameters['continueurl'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => $this->_encryptor->encrypt($attributes['INCREMENT_ID'])]]);
+            $parameters['cancelurl'] = $this->getFrontUrl('pensopay/payment/cancelAction');
         }
 
         switch ($attributes['PAYMENT_METHOD']) {
