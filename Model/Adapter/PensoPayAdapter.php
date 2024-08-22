@@ -242,8 +242,8 @@ class PensoPayAdapter
             $form['basket'] = [];
             /** @var \Magento\Sales\Model\Order\Item $item */
             foreach ($items as $item) {
-                if (!$item->getPrice() && $item->getParentItemId()) {
-                    continue; //Simples of configurables that carry no prices aren't wanted
+                if ((!$item->getPrice() && $item->getParentItemId()) || ($item->getParentItem() && $item->getParentItem()->getProductType() === 'bundle')) {
+                    continue; //Simples of configurables that carry no prices aren't wanted, as well as bundle options because they are counted as additions to the cart
                 }
                 $form['basket'][] = [
                     'qty' => (int)$item->getQtyOrdered(),
