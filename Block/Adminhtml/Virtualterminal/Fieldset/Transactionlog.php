@@ -47,13 +47,14 @@ class Transactionlog extends \Magento\Framework\View\Element\AbstractBlock
                     );
                     $html .= '</thead><tbody>';
                     foreach ($operationsArray as $operation) {
+                        $dateTime = new \DateTime($operation['created_at']);
                         $html .= sprintf(
                             '<tr class="%s"><td>%s</td><td>%s: %s</td><td>%s</td></tr>',
                             $this->_pensoPayHelper->getStatusColorCode($operation['qp_status_code']),
                             $operation['type'],
                             $operation['qp_status_code'],
                             $operation['qp_status_msg'],
-                            strftime('%d-%m-%Y %H:%M:%S', strtotime($operation['created_at']))
+                            $dateTime->format('d-m-Y H:i:s')
                         );
                     }
                     $html .= '</tbody></table>';

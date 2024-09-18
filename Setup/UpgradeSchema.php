@@ -67,6 +67,136 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 )
                 ->setComment('PensoPay Virtual Terminal Payments');
             $setup->getConnection()->createTable($table);
+        } else if (version_compare($context->getVersion(), '2.1.5') < 0) {
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('quote'),
+                    'card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('quote_address'),
+                    'card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('quote_address'),
+                    'base_card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Base Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('quote'),
+                    'base_card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Base Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('sales_order'),
+                    'card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('sales_order'),
+                    'base_card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Base Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('sales_invoice'),
+                    'card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('sales_invoice'),
+                    'base_card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Base Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('sales_creditmemo'),
+                    'card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Card Surcharge'
+                    ]
+                );
+
+            $setup->getConnection()
+                ->addColumn(
+                    $setup->getTable('sales_creditmemo'),
+                    'base_card_surcharge',
+                    [
+                        'type' => Table::TYPE_DECIMAL,
+                        'nullable' => true,
+                        'length' => '12,4',
+                        'default' => '0.0000',
+                        'comment' => 'Base Card Surcharge'
+                    ]
+                );
         }
     }
 }

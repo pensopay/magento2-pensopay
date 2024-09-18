@@ -212,5 +212,10 @@
                 <cardlogo_size>25</cardlogo_size>
             </pensopay_vipps>
         </payment>
+        <sales>
+            <totals_sort>
+                <card_surcharge>31</card_surcharge>
+            </totals_sort>
+        </sales>
     </default>
 </config>
