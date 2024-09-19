@@ -3,7 +3,7 @@
     <update handle="styles"/>
     <body>
         <referenceContainer name="content">
-            <uiComponent name="pensopay_virtualterminal_grid"/>
+            <uiComponent name="pensopaygw_virtualterminal_grid.xml"/>
             <block class="PensoPay\Payment\Block\Adminhtml\Virtualterminal\CreatePayment" name="payment_list"/>
             <block class="Magento\Backend\Block\Template" name="redirect_payment" template="PensoPay_Payment::virtualterminal/redirect.phtml"/>
         </referenceContainer>
