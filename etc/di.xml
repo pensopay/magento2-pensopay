@@ -8,6 +8,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensoPayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensoPayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -25,6 +26,18 @@
     <virtualType name="PensoPayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\PensoPayConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensoPayCountryValidator</item>
+            </argument>
         </arguments>
     </virtualType>
 
@@ -128,6 +141,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayPayPalValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensoPayPayPalValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensoPayPayPalValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -147,6 +161,18 @@
             <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\PayPalConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
+    <virtualType name="PensoPayPayPalCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayPayPalConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayPayPalValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensoPayPayPalCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
 
     <!-- KlarnaPayments -->
     <virtualType name="PensoPayKlarnaPaymentsFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -156,6 +182,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayKlarnaPaymentsValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensoPayKlarnaPaymentsValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensoPayKlarnaPaymentsValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -173,6 +200,18 @@
     <virtualType name="PensoPayKlarnaPaymentsConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">\PensoPay\Payment\Model\Ui\Method\KlarnaPaymentsConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayKlarnaPaymentsCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensoPayKlarnaPaymentsConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensoPayKlarnaPaymentsValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensoPayKlarnaPaymentsCountryValidator</item>
+            </argument>
         </arguments>
     </virtualType>
 
