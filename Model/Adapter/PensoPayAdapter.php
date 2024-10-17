@@ -232,9 +232,9 @@ class PensoPayAdapter
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
 //            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
-                $form['shipping'] = [
-                    'amount' => $order->getBaseShippingInclTax() * 100
-                ];
+            $form['shipping'] = [
+                'amount' => $order->getBaseShippingInclTax() * 100
+            ];
 //            }
 
             //Build basket array
@@ -252,6 +252,10 @@ class PensoPayAdapter
                     'item_price' => (float)(round(($item->getBaseRowTotalInclTax() - $item->getBaseDiscountAmount()) / $item->getQtyOrdered(), 2) * 100),
                     'vat_rate' => $item->getTaxPercent() / 100
                 ];
+            }
+
+            if ($attributes['PAYMENT_METHOD'] === PayPalConfigProvider::CODE) {
+                $form['fee'] = 0; //Quickpay bugs out with paypal fees and baskets
             }
 
 //            if ($attributes['PAYMENT_METHOD'] === KlarnaPaymentsConfigProvider::CODE) {
