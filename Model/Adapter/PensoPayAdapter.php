@@ -231,11 +231,11 @@ class PensoPayAdapter
 
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
-//            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
-            $form['shipping'] = [
-                'amount' => $order->getBaseShippingInclTax() * 100
-            ];
-//            }
+            if ($attributes['PAYMENT_METHOD'] !== PayPalConfigProvider::CODE) {
+                $form['shipping'] = [
+                    'amount' => $order->getBaseShippingInclTax() * 100
+                ];
+            }
 
             //Build basket array
             $items = $attributes['ITEMS'];
@@ -252,10 +252,6 @@ class PensoPayAdapter
                     'item_price' => (float)(round(($item->getBaseRowTotalInclTax() - $item->getBaseDiscountAmount()) / $item->getQtyOrdered(), 2) * 100),
                     'vat_rate' => $item->getTaxPercent() / 100
                 ];
-            }
-
-            if ($attributes['PAYMENT_METHOD'] === PayPalConfigProvider::CODE) {
-                $form['fee'] = 0; //Quickpay bugs out with paypal fees and baskets
             }
 
 //            if ($attributes['PAYMENT_METHOD'] === KlarnaPaymentsConfigProvider::CODE) {
@@ -287,6 +283,11 @@ class PensoPayAdapter
         $this->_eventManager->dispatch('pensopay_formdata_construct_after', ['data_object' => $dataObject]);
 
         $form = $dataObject->getForm();
+
+        if ($attributes['PAYMENT_METHOD'] === PayPalConfigProvider::CODE) {
+            $form['fee'] = 0;
+            unset($form['basket']);
+        }
 
         return $form;
     }
@@ -383,6 +384,7 @@ class PensoPayAdapter
                 break;
             case PayPalConfigProvider::CODE:
                 $parameters['payment_methods'] = 'paypal';
+                $parameters['auto_fee'] = 0;
                 break;
             case VippsConfigProvider::CODE:
                 $parameters['payment_methods'] = 'vipps,vippspsp';
