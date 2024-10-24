@@ -7,6 +7,6 @@
     <update handle="styles"/>
     <update handle="editor"/>
     <referenceContainer name="content">
-        <uiComponent name="pensopaygw_virtualterminal_payment.xml"/>
+        <uiComponent name="virtualterminal_payment"/>
     </referenceContainer>
 </page>
