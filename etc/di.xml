@@ -424,4 +424,10 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- Order extension attributes, expose surcharge -->
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="order_surcharge_attribute"
+                type="PensoPay\Payment\Plugin\OrderRepository" />
+    </type>
 </config>
