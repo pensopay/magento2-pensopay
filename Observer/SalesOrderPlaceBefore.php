@@ -15,7 +15,7 @@ use PensoPay\Payment\Model\Ui\Method\KlarnaPaymentsConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\PayPalConfigProvider;
 use PensoPay\Payment\Model\Ui\Method\VippsConfigProvider;
 
-class SalesOrderPlaceAfter implements ObserverInterface
+class SalesOrderPlaceBefore implements ObserverInterface
 {
     /** @var Data $_pensoPayHelper */
     protected $_pensoPayHelper;
@@ -36,7 +36,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
     {
         /** @var OrderAlias $order */
         $order = $observer->getOrder();
-        
+
         /** @var \Magento\Sales\Model\Order\Payment\Interceptor $payment */
         $payment = $order->getPayment();
 
