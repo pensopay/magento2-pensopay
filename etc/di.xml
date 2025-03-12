@@ -419,7 +419,6 @@
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="pensopay_virtualterminal_grid_data_source" xsi:type="string">PensoPay\Payment\Model\ResourceModel\Payment\Collection</item>
                 <item name="pensopay_virtualterminal_grid_data_source" xsi:type="string">PensoPay\Payment\Model\ResourceModel\Virtualterminal\Collection</item>
             </argument>
         </arguments>

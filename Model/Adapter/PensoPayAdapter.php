@@ -346,7 +346,7 @@ class PensoPayAdapter
     {
         $parameters = [
             'amount' => $attributes['AMOUNT'],
-//            'callback_url' => 'https://' . '6db2-93-176-77-122.ngrok-free.app' . '/pensopay/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
+//            'callback_url' => 'https://' . 'x.ngrok-free.app' . '/pensopay/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
             'callbackurl' => $this->getFrontUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
             'customer_email' => $attributes['EMAIL']
         ];
